@@ -56,17 +56,21 @@ int main(int argc, char *argv[])
     arrowsSlider->setValue(16);
     arrowsSlider->setMaximum(32);
 
-    //
+    // Layout
     QVBoxLayout *vTopLayout = new QVBoxLayout();
     QHBoxLayout *hXLayout = new QHBoxLayout();
     QHBoxLayout *hYLayout = new QHBoxLayout();
     QHBoxLayout *hZLayout = new QHBoxLayout();
+    QHBoxLayout *hSegLayout = new QHBoxLayout();
 
     vLayout->addLayout(vTopLayout);
+    vLayout->addLayout(hSegLayout);
     vLayout->addLayout(hXLayout);
     vLayout->addLayout(hYLayout);
     vLayout->addLayout(hZLayout);
+    //
 
+    // Set ranges
     QLineEdit *xRange1 = new QLineEdit(widget);
     xRange1->setPlaceholderText(QString("x1"));
     QLineEdit *xRange2 = new QLineEdit(widget);
@@ -81,6 +85,21 @@ int main(int argc, char *argv[])
     zRange1->setPlaceholderText(QString("z1"));
     QLineEdit *zRange2 = new QLineEdit(widget);
     zRange2->setPlaceholderText(QString("z2"));
+    //
+
+    // Set segments
+    QLineEdit *xSeg = new QLineEdit(widget);
+    xSeg->setPlaceholderText(QString("10"));
+    QLineEdit *ySeg = new QLineEdit(widget);
+    ySeg->setPlaceholderText(QString("10"));
+    QLineEdit *zSeg = new QLineEdit(widget);
+    zSeg->setPlaceholderText(QString("10"));
+    //
+
+    // Bottom layout
+    hSegLayout->addWidget(xSeg);
+    hSegLayout->addWidget(ySeg);
+    hSegLayout->addWidget(zSeg);
 
     hXLayout->addWidget(xRange1);
     hXLayout->addWidget(xRange2);
@@ -90,8 +109,9 @@ int main(int argc, char *argv[])
 
     hZLayout->addWidget(zRange1);
     hZLayout->addWidget(zRange2);
-
     //
+
+    // Top layout
     vTopLayout->addWidget(toggleRotationButton);
     vTopLayout->addWidget(toggleSunButton);
     vTopLayout->addWidget(new QLabel(QStringLiteral("Field Lines (1 - 128):")));
@@ -117,6 +137,10 @@ int main(int argc, char *argv[])
     QObject::connect(yRange2, SIGNAL(textChanged(QString)), modifier, SLOT(setYSecond(QString)));
     QObject::connect(zRange1, SIGNAL(textChanged(QString)), modifier, SLOT(setZFirst(QString)));
     QObject::connect(zRange2, SIGNAL(textChanged(QString)), modifier, SLOT(setZSecond(QString)));
+
+    QObject::connect(xSeg, SIGNAL(textChanged(QString)), modifier, SLOT(setXRange(QString)));
+    QObject::connect(ySeg, SIGNAL(textChanged(QString)), modifier, SLOT(setYRange(QString)));
+    QObject::connect(zSeg, SIGNAL(textChanged(QString)), modifier, SLOT(setZRange(QString)));
 
     widget->show();
     return app.exec();

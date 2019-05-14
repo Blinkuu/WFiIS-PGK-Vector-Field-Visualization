@@ -29,6 +29,10 @@ public Q_SLOTS:
     void setZFirst(const QString& z);
     void setZSecond(const QString& z);
 
+    void setXRange(const QString& x);
+    void setYRange(const QString& x);
+    void setZRange(const QString& x);
+
 private:
     Q3DScatter *m_graph;
     QTimer m_rotationTimer;
@@ -44,4 +48,8 @@ private:
     QPair<float, float> m_xRange;
     QPair<float, float> m_yRange;
     QPair<float, float> m_zRange;
+
+    int m_xSegments;
+    int m_ySegments;
+    int m_zSegments;
 };

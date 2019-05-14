@@ -29,7 +29,10 @@ Scatter::Scatter(Q3DScatter *scatter)
       m_angleStep(doublePi / m_arrowsPerLine / animationFrames),
       m_xRange(-horizontalRange, horizontalRange),
       m_yRange(-verticalRange, verticalRange),
-      m_zRange(-horizontalRange, horizontalRange)
+      m_zRange(-horizontalRange, horizontalRange),
+      m_xSegments(static_cast<int>(horizontalRange)),
+      m_ySegments(static_cast<int>(verticalRange)),
+      m_zSegments(static_cast<int>(horizontalRange))
 {
     m_graph->setShadowQuality(QAbstract3DGraph::ShadowQualityNone);
     m_graph->scene()->activeCamera()->setCameraPreset(Q3DCamera::CameraPresetFront);
@@ -211,4 +214,22 @@ void Scatter::setZSecond(const QString& z) {
     !z.isEmpty() && z.toFloat() > 0.0f ? m_zRange.second = z.toFloat() : m_zRange.second = 10.0f;
 
     axis->setRange(m_zRange.first, m_zRange.second);
+}
+
+void Scatter::setXRange(const QString& x) {
+    QValue3DAxis* axis = m_graph->axisX();
+
+    !x.isEmpty() && x.toInt() > 0 ? axis->setSegmentCount(x.toInt()) : axis->setSegmentCount(static_cast<int>(horizontalRange));
+}
+
+void Scatter::setYRange(const QString& x) {
+    QValue3DAxis* axis = m_graph->axisY();
+
+    !x.isEmpty() && x.toInt() > 0 ? axis->setSegmentCount(x.toInt()) : axis->setSegmentCount(static_cast<int>(horizontalRange));
+}
+
+void Scatter::setZRange(const QString& x) {
+    QValue3DAxis* axis = m_graph->axisZ();
+
+    !x.isEmpty() && x.toInt() > 0 ? axis->setSegmentCount(x.toInt()) : axis->setSegmentCount(static_cast<int>(horizontalRange));
 }
