@@ -40,6 +40,7 @@ private:
     int m_arrowsPerLine;
     QScatter3DSeries *m_magneticField;
     QCustom3DItem *m_sun;
+    QCustom3DItem *m_vec;
     QScatterDataArray *m_magneticFieldArray;
     float m_angleOffset;
     float m_angleStep;

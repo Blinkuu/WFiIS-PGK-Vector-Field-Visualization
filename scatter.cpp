@@ -7,15 +7,13 @@
 #include <QtDataVisualization/q3dtheme.h>
 #include <QtDataVisualization/QCustom3DItem>
 #include <QtCore/qmath.h>
+#include <iostream>
 
 using namespace QtDataVisualization;
 
 static constexpr float verticalRange = 10.0f;
 static constexpr float horizontalRange = verticalRange;
-static constexpr float ellipse_a = horizontalRange / 3.0f;
-static constexpr float ellipse_b = verticalRange;
 static constexpr float doublePi = float(M_PI) * 2.0f;
-static constexpr float radiansToDegrees = 360.0f / doublePi;
 static constexpr float animationFrames = 30.0f;
 
 Scatter::Scatter(Q3DScatter *scatter)
@@ -24,6 +22,7 @@ Scatter::Scatter(Q3DScatter *scatter)
       m_arrowsPerLine(16),
       m_magneticField(new QScatter3DSeries),
       m_sun(new QCustom3DItem),
+      m_vec(new QCustom3DItem),
       m_magneticFieldArray(nullptr),
       m_angleOffset(0.0f),
       m_angleStep(doublePi / m_arrowsPerLine / animationFrames),
@@ -45,21 +44,44 @@ Scatter::Scatter(Q3DScatter *scatter)
     //! [3]
     //! [4]
     QLinearGradient fieldGradient(0, 0, 16, 1024);
-    fieldGradient.setColorAt(0.0, Qt::black);
-    fieldGradient.setColorAt(1.0, Qt::white);
+    fieldGradient.setColorAt(0.0, Qt::yellow);
+    fieldGradient.setColorAt(1.0, Qt::red);
     m_magneticField->setBaseGradient(fieldGradient);
     m_magneticField->setColorStyle(Q3DTheme::ColorStyleRangeGradient);
     //! [4]
 
     // For 'sun' we use a custom large sphere
-    m_sun->setScaling(QVector3D(0.07f, 0.07f, 0.07f));
-    m_sun->setMeshFile(QStringLiteral(":/sphere.obj"));
+    // m_sun->setScaling(QVector3D(0.07f, 0.07f, 0.07f));
+    // m_sun->setMeshFile(QStringLiteral(":/sphere.obj"));
     QImage sunColor = QImage(2, 2, QImage::Format_RGB32);
     sunColor.fill(QColor(0xff, 0xbb, 0x00));
-    m_sun->setTextureImage(sunColor);
+//    m_sun->setTextureImage(sunColor);
+
+    m_vec->setScaling(QVector3D(0.07f, 1.f, 0.07f));
+        m_vec->setMeshFile(QStringLiteral(":/arrow.obj"));
+        m_vec->setTextureImage(sunColor);
+        m_vec->setPosition(QVector3D(1.0f, 1.0f, 1.0f));
+
+        for (float xr = -horizontalRange; xr <= horizontalRange; xr += 1.0f) {
+            for (float yr = -verticalRange; yr <= verticalRange; yr += 1.0f) {
+                for(float zr = -horizontalRange; zr <= horizontalRange; zr += 1.0f){
+                    auto item = new  QCustom3DItem();
+                    auto vec  = QVector3D(xr, yr, zr);
+                    auto end = QVector3D(xr, yr, zr) + vec;
+                    item->setScaling(QVector3D(0.07f, vec.length() / 200, 0.07f));
+                    item->setMeshFile(QStringLiteral(":/arrow.obj"));
+                    item->setTextureImage(sunColor);
+                    item->setPosition(QVector3D(xr, yr, zr));
+                    m_graph->addCustomItem(item);
+                }
+            }
+        }
+
 
     m_graph->addSeries(m_magneticField);
-    m_graph->addCustomItem(m_sun);
+    //m_graph->addCustomItem(m_sun);
+    m_graph->addCustomItem(m_vec);
+    m_graph->customItems().clear();
 
     // Configure the axes according to the data
     m_graph->axisX()->setRange(m_xRange.first, m_xRange.second);
@@ -84,56 +106,56 @@ void Scatter::generateData()
 {
     // Reusing existing array is computationally cheaper than always generating new array, even if
     // all data items change in the array, if the array size doesn't change.
-    if (!m_magneticFieldArray)
-        m_magneticFieldArray = new QScatterDataArray;
+    // if (!m_magneticFieldArray)
+    //     m_magneticFieldArray = new QScatterDataArray;
 
-    int arraySize = m_fieldLines * m_arrowsPerLine;
-    if (arraySize != m_magneticFieldArray->size())
-        m_magneticFieldArray->resize(arraySize);
+    // int arraySize = m_fieldLines * m_arrowsPerLine;
+    // if (arraySize != m_magneticFieldArray->size())
+    //     m_magneticFieldArray->resize(arraySize);
 
-    QScatterDataItem *ptrToDataArray = &m_magneticFieldArray->first();
+    // QScatterDataItem *ptrToDataArray = &m_magneticFieldArray->first();
 
-    for (float i = 0; i < m_fieldLines; i++) {
-        float horizontalAngle = (doublePi * i) / m_fieldLines;
-        float xCenter = ellipse_a * qCos(horizontalAngle);
-        float zCenter = ellipse_a * qSin(horizontalAngle);
+    // for (float i = 0; i < m_fieldLines; i++) {
+    //     float horizontalAngle = (doublePi * i) / m_fieldLines;
+    //     float xCenter = ellipse_a * qCos(horizontalAngle);
+    //     float zCenter = ellipse_a * qSin(horizontalAngle);
 
-        // Rotate - arrow always tangential to origin
-        //! [0]
-        QQuaternion yRotation = QQuaternion::fromAxisAndAngle(0.0f, 1.0f, 0.0f, horizontalAngle * radiansToDegrees);
-        //! [0]
+    //     // Rotate - arrow always tangential to origin
+    //     //! [0]
+    //     QQuaternion yRotation = QQuaternion::fromAxisAndAngle(0.0f, 1.0f, 0.0f, horizontalAngle * radiansToDegrees);
+    //     //! [0]
 
-        for (float j = 0; j < m_arrowsPerLine; j++) {
-            // Calculate point on ellipse centered on origin and parallel to x-axis
-            float verticalAngle = ((doublePi * j) / m_arrowsPerLine) + m_angleOffset;
-            float xUnrotated = ellipse_a * qCos(verticalAngle);
-            float y = ellipse_b * qSin(verticalAngle);
+    //     for (float j = 0; j < m_arrowsPerLine; j++) {
+    //         // Calculate point on ellipse centered on origin and parallel to x-axis
+    //         float verticalAngle = ((doublePi * j) / m_arrowsPerLine) + m_angleOffset;
+    //         float xUnrotated = ellipse_a * qCos(verticalAngle);
+    //         float y = ellipse_b * qSin(verticalAngle);
 
-            // Rotate the ellipse around y-axis
-            float xRotated = xUnrotated * qCos(horizontalAngle);
-            float zRotated = xUnrotated * qSin(horizontalAngle);
+    //         // Rotate the ellipse around y-axis
+    //         float xRotated = xUnrotated * qCos(horizontalAngle);
+    //         float zRotated = xUnrotated * qSin(horizontalAngle);
 
-            // Add offset
-            float x = xCenter + xRotated;
-            float z = zCenter + zRotated;
+    //         // Add offset
+    //         float x = xCenter + xRotated;
+    //         float z = zCenter + zRotated;
 
-            //! [1]
-            QQuaternion zRotation = QQuaternion::fromAxisAndAngle(0.0f, 0.0f, 1.0f, verticalAngle * radiansToDegrees);
-            QQuaternion totalRotation = yRotation * zRotation;
-            //! [1]
+    //         //! [1]
+    //         QQuaternion zRotation = QQuaternion::fromAxisAndAngle(0.0f, 0.0f, 1.0f, verticalAngle * radiansToDegrees);
+    //         QQuaternion totalRotation = yRotation * zRotation;
+    //         //! [1]
 
-            ptrToDataArray->setPosition(QVector3D(x, y, z));
-            //! [2]
-            ptrToDataArray->setRotation(totalRotation);
-            //! [2]
-            ptrToDataArray++;
-        }
-    }
+    //         ptrToDataArray->setPosition(QVector3D(x, y, z));
+    //         //! [2]
+    //         ptrToDataArray->setRotation(totalRotation);
+    //         //! [2]
+    //         ptrToDataArray++;
+    //     }
+    // }
 
-    if (m_graph->selectedSeries() == m_magneticField)
-        m_graph->clearSelection();
+    // if (m_graph->selectedSeries() == m_magneticField)
+    //     m_graph->clearSelection();
 
-    m_magneticField->dataProxy()->resetArray(m_magneticFieldArray);
+    // m_magneticField->dataProxy()->resetArray(m_magneticFieldArray);
 }
 
 void Scatter::setFieldLines(int lines)
