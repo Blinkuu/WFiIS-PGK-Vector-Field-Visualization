@@ -15,6 +15,7 @@ static constexpr float verticalRange = 10.0f;
 static constexpr float horizontalRange = verticalRange;
 static constexpr float doublePi = static_cast<float>(M_PI) * 2.0f;
 static constexpr float animationFrames = 30.0f;
+static constexpr float radiansToDegrees = 360.0f / doublePi;
 
 Scatter::Scatter(Q3DScatter *scatter)
     : m_graph(scatter),
@@ -62,16 +63,38 @@ Scatter::Scatter(Q3DScatter *scatter)
     m_vec->setTextureImage(sunColor);
     m_vec->setPosition(QVector3D(1.0f, 1.0f, 1.0f));
 
-    for (float xr = -horizontalRange; xr <= horizontalRange; xr += 1.0f) {
-        for (float yr = -verticalRange; yr <= verticalRange; yr += 1.0f) {
-            for(float zr = -horizontalRange; zr <= horizontalRange; zr += 1.0f){
-                auto item = new  QCustom3DItem();
+    for (float xr = m_xRange.first; xr <= m_xRange.second; xr += 2.0f) {
+        for (float yr = m_yRange.first; yr <= m_yRange.second; yr += 2.0f) {
+            for(float zr = m_zRange.first; zr <= m_zRange.second; zr += 2.0f){
                 auto vec  = QVector3D(xr, yr, zr);
+                auto item = new QCustom3DItem();
                 auto end = QVector3D(xr, yr, zr) + vec;
                 item->setScaling(QVector3D(0.07f, vec.length() / 200, 0.07f));
                 item->setMeshFile(QStringLiteral(":/arrow.obj"));
                 item->setTextureImage(sunColor);
                 item->setPosition(QVector3D(xr, yr, zr));
+
+                double zrot = 0.0;
+                auto xy = QVector2D(vec.x(), vec.y());
+                zrot = qAtan2(xy.x(), xy.y());
+                QQuaternion zRotation = QQuaternion::fromAxisAndAngle(0.0f, 0.0f, 1.0f, zrot * radiansToDegrees);
+
+                double yrot = 0.0;
+                auto xz = QVector2D(vec.x(), vec.z());
+                yrot = qAtan2(xz.x(), xz.y());
+                QQuaternion yRotation = QQuaternion::fromAxisAndAngle(0.0f, 1.0f, 0.0f, yrot * radiansToDegrees);
+
+                double xrot = 0.0;
+                auto yz = QVector2D(vec.z(), vec.y());
+                xrot = -qAtan2(yz.x(), yz.y());
+                QQuaternion xRotation = QQuaternion::fromAxisAndAngle(1.0f, 0.0f, 0.0f, xrot * radiansToDegrees);
+
+                //item->setRotation(xRotation *  yRotation  *  zRotation);
+                item->setRotationAxisAndAngle(QVector3D(0.0f, 0.0f, 1.0f), zrot * radiansToDegrees);
+                item->setRotationAxisAndAngle(QVector3D(0.0f, 1.0f, 0.0f), yrot * radiansToDegrees);
+                item->setRotationAxisAndAngle(QVector3D(1.0f, 0.0f, 0.0f), xrot * radiansToDegrees);
+                //std::cout << zrot * radiansToDegrees << "\n";
+
                 m_graph->addCustomItem(item);
             }
         }
