@@ -22,6 +22,13 @@ public Q_SLOTS:
     void triggerRotation();
     void toggleSun();
 
+    void setXFirst(const QString& x);
+    void setXSecond(const QString& x);
+    void setYFirst(const QString& y);
+    void setYSecond(const QString& y);
+    void setZFirst(const QString& z);
+    void setZSecond(const QString& z);
+
 private:
     Q3DScatter *m_graph;
     QTimer m_rotationTimer;
@@ -32,4 +39,9 @@ private:
     QScatterDataArray *m_magneticFieldArray;
     float m_angleOffset;
     float m_angleStep;
+
+private:
+    QPair<float, float> m_xRange;
+    QPair<float, float> m_yRange;
+    QPair<float, float> m_zRange;
 };

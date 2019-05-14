@@ -10,13 +10,13 @@
 
 using namespace QtDataVisualization;
 
-static const float verticalRange = 8.0f;
-static const float horizontalRange = verticalRange;
-static const float ellipse_a = horizontalRange / 3.0f;
-static const float ellipse_b = verticalRange;
-static const float doublePi = float(M_PI) * 2.0f;
-static const float radiansToDegrees = 360.0f / doublePi;
-static const float animationFrames = 30.0f;
+static constexpr float verticalRange = 10.0f;
+static constexpr float horizontalRange = verticalRange;
+static constexpr float ellipse_a = horizontalRange / 3.0f;
+static constexpr float ellipse_b = verticalRange;
+static constexpr float doublePi = float(M_PI) * 2.0f;
+static constexpr float radiansToDegrees = 360.0f / doublePi;
+static constexpr float animationFrames = 30.0f;
 
 Scatter::Scatter(Q3DScatter *scatter)
     : m_graph(scatter),
@@ -26,7 +26,10 @@ Scatter::Scatter(Q3DScatter *scatter)
       m_sun(new QCustom3DItem),
       m_magneticFieldArray(nullptr),
       m_angleOffset(0.0f),
-      m_angleStep(doublePi / m_arrowsPerLine / animationFrames)
+      m_angleStep(doublePi / m_arrowsPerLine / animationFrames),
+      m_xRange(-horizontalRange, horizontalRange),
+      m_yRange(-verticalRange, verticalRange),
+      m_zRange(-horizontalRange, horizontalRange)
 {
     m_graph->setShadowQuality(QAbstract3DGraph::ShadowQualityNone);
     m_graph->scene()->activeCamera()->setCameraPreset(Q3DCamera::CameraPresetFront);
@@ -56,9 +59,9 @@ Scatter::Scatter(Q3DScatter *scatter)
     m_graph->addCustomItem(m_sun);
 
     // Configure the axes according to the data
-    m_graph->axisX()->setRange(-horizontalRange, horizontalRange);
-    m_graph->axisY()->setRange(-verticalRange, verticalRange);
-    m_graph->axisZ()->setRange(-horizontalRange, horizontalRange);
+    m_graph->axisX()->setRange(m_xRange.first, m_xRange.second);
+    m_graph->axisY()->setRange(m_yRange.first, m_yRange.second);
+    m_graph->axisZ()->setRange(m_zRange.first, m_zRange.second);
     m_graph->axisX()->setSegmentCount(int(horizontalRange));
     m_graph->axisZ()->setSegmentCount(int(horizontalRange));
 
@@ -161,4 +164,51 @@ void Scatter::toggleRotation()
         m_rotationTimer.stop();
     else
         m_rotationTimer.start(15);
+}
+
+void Scatter::setXFirst(const QString& x) {
+    QValue3DAxis* axis = m_graph->axisX();
+
+    !x.isEmpty() && x.toFloat() < 0.0f ? m_xRange.first = x.toFloat() : m_xRange.first = -10.0f;
+
+    axis->setRange(m_xRange.first, m_xRange.second);
+}
+
+void Scatter::setXSecond(const QString& x) {
+    QValue3DAxis* axis = m_graph->axisX();
+
+    !x.isEmpty() && x.toFloat() > 0.0f ? m_xRange.second = x.toFloat() : m_xRange.second = 10.0f;
+
+    axis->setRange(m_xRange.first, m_xRange.second);
+}
+
+void Scatter::setYFirst(const QString& y) {
+    QValue3DAxis* axis = m_graph->axisY();
+
+    !y.isEmpty() && y.toFloat() < 0.0f ? m_yRange.first = y.toFloat() : m_yRange.first = -10.0f;
+
+    axis->setRange(m_yRange.first, m_yRange.second);
+}
+
+void Scatter::setYSecond(const QString& y) {
+    QValue3DAxis* axis = m_graph->axisY();
+
+    !y.isEmpty() && y.toFloat() > 0.0f ? m_yRange.second = y.toFloat() : m_yRange.second = 10.0f;
+
+    axis->setRange(m_yRange.first, m_yRange.second);
+}
+void Scatter::setZFirst(const QString& z) {
+    QValue3DAxis* axis = m_graph->axisZ();
+
+    !z.isEmpty() && z.toFloat() < 0.0f ? m_zRange.first = z.toFloat() : m_zRange.first = -10.0f;
+
+    axis->setRange(m_zRange.first, m_zRange.second);
+}
+
+void Scatter::setZSecond(const QString& z) {
+    QValue3DAxis* axis = m_graph->axisZ();
+
+    !z.isEmpty() && z.toFloat() > 0.0f ? m_zRange.second = z.toFloat() : m_zRange.second = 10.0f;
+
+    axis->setRange(m_zRange.first, m_zRange.second);
 }

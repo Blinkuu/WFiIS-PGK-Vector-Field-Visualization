@@ -6,6 +6,7 @@
 #include <QtWidgets/QSlider>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMessageBox>
+#include <QtWidgets/QLineEdit>
 #include <QtGui/QScreen>
 #include <QApplication>
 
@@ -55,12 +56,49 @@ int main(int argc, char *argv[])
     arrowsSlider->setValue(16);
     arrowsSlider->setMaximum(32);
 
-    vLayout->addWidget(toggleRotationButton);
-    vLayout->addWidget(toggleSunButton);
-    vLayout->addWidget(new QLabel(QStringLiteral("Field Lines (1 - 128):")));
-    vLayout->addWidget(fieldLinesSlider);
-    vLayout->addWidget(new QLabel(QStringLiteral("Arrows per line (8 - 32):")));
-    vLayout->addWidget(arrowsSlider, 1, Qt::AlignTop);
+    //
+    QVBoxLayout *vTopLayout = new QVBoxLayout();
+    QHBoxLayout *hXLayout = new QHBoxLayout();
+    QHBoxLayout *hYLayout = new QHBoxLayout();
+    QHBoxLayout *hZLayout = new QHBoxLayout();
+
+    vLayout->addLayout(vTopLayout);
+    vLayout->addLayout(hXLayout);
+    vLayout->addLayout(hYLayout);
+    vLayout->addLayout(hZLayout);
+
+    QLineEdit *xRange1 = new QLineEdit(widget);
+    xRange1->setPlaceholderText(QString("x1"));
+    QLineEdit *xRange2 = new QLineEdit(widget);
+    xRange2->setPlaceholderText(QString("x2"));
+
+    QLineEdit *yRange1 = new QLineEdit(widget);
+    yRange1->setPlaceholderText(QString("y1"));
+    QLineEdit *yRange2 = new QLineEdit(widget);
+    yRange2->setPlaceholderText(QString("y2"));
+
+    QLineEdit *zRange1 = new QLineEdit(widget);
+    zRange1->setPlaceholderText(QString("z1"));
+    QLineEdit *zRange2 = new QLineEdit(widget);
+    zRange2->setPlaceholderText(QString("z2"));
+
+    hXLayout->addWidget(xRange1);
+    hXLayout->addWidget(xRange2);
+
+    hYLayout->addWidget(yRange1);
+    hYLayout->addWidget(yRange2);
+
+    hZLayout->addWidget(zRange1);
+    hZLayout->addWidget(zRange2);
+
+    //
+    vTopLayout->addWidget(toggleRotationButton);
+    vTopLayout->addWidget(toggleSunButton);
+    vTopLayout->addWidget(new QLabel(QStringLiteral("Field Lines (1 - 128):")));
+    vTopLayout->addWidget(fieldLinesSlider);
+    vTopLayout->addWidget(new QLabel(QStringLiteral("Arrows per line (8 - 32):")));
+    vTopLayout->addWidget(arrowsSlider, 1, Qt::AlignTop);
+    //
 
     Scatter *modifier = new Scatter(graph);
 
@@ -72,6 +110,13 @@ int main(int argc, char *argv[])
                      &Scatter::setFieldLines);
     QObject::connect(arrowsSlider, &QSlider::valueChanged, modifier,
                      &Scatter::setArrowsPerLine);
+
+    QObject::connect(xRange1, SIGNAL(textChanged(QString)), modifier, SLOT(setXFirst(QString)));
+    QObject::connect(xRange2, SIGNAL(textChanged(QString)), modifier, SLOT(setXSecond(QString)));
+    QObject::connect(yRange1, SIGNAL(textChanged(QString)), modifier, SLOT(setYFirst(QString)));
+    QObject::connect(yRange2, SIGNAL(textChanged(QString)), modifier, SLOT(setYSecond(QString)));
+    QObject::connect(zRange1, SIGNAL(textChanged(QString)), modifier, SLOT(setZFirst(QString)));
+    QObject::connect(zRange2, SIGNAL(textChanged(QString)), modifier, SLOT(setZSecond(QString)));
 
     widget->show();
     return app.exec();
