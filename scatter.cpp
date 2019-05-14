@@ -13,7 +13,7 @@ using namespace QtDataVisualization;
 
 static constexpr float verticalRange = 10.0f;
 static constexpr float horizontalRange = verticalRange;
-static constexpr float doublePi = float(M_PI) * 2.0f;
+static constexpr float doublePi = static_cast<float>(M_PI) * 2.0f;
 static constexpr float animationFrames = 30.0f;
 
 Scatter::Scatter(Q3DScatter *scatter)
@@ -55,28 +55,27 @@ Scatter::Scatter(Q3DScatter *scatter)
     // m_sun->setMeshFile(QStringLiteral(":/sphere.obj"));
     QImage sunColor = QImage(2, 2, QImage::Format_RGB32);
     sunColor.fill(QColor(0xff, 0xbb, 0x00));
-//    m_sun->setTextureImage(sunColor);
+    //    m_sun->setTextureImage(sunColor);
 
     m_vec->setScaling(QVector3D(0.07f, 1.f, 0.07f));
-        m_vec->setMeshFile(QStringLiteral(":/arrow.obj"));
-        m_vec->setTextureImage(sunColor);
-        m_vec->setPosition(QVector3D(1.0f, 1.0f, 1.0f));
+    m_vec->setMeshFile(QStringLiteral(":/arrow.obj"));
+    m_vec->setTextureImage(sunColor);
+    m_vec->setPosition(QVector3D(1.0f, 1.0f, 1.0f));
 
-        for (float xr = -horizontalRange; xr <= horizontalRange; xr += 1.0f) {
-            for (float yr = -verticalRange; yr <= verticalRange; yr += 1.0f) {
-                for(float zr = -horizontalRange; zr <= horizontalRange; zr += 1.0f){
-                    auto item = new  QCustom3DItem();
-                    auto vec  = QVector3D(xr, yr, zr);
-                    auto end = QVector3D(xr, yr, zr) + vec;
-                    item->setScaling(QVector3D(0.07f, vec.length() / 200, 0.07f));
-                    item->setMeshFile(QStringLiteral(":/arrow.obj"));
-                    item->setTextureImage(sunColor);
-                    item->setPosition(QVector3D(xr, yr, zr));
-                    m_graph->addCustomItem(item);
-                }
+    for (float xr = -horizontalRange; xr <= horizontalRange; xr += 1.0f) {
+        for (float yr = -verticalRange; yr <= verticalRange; yr += 1.0f) {
+            for(float zr = -horizontalRange; zr <= horizontalRange; zr += 1.0f){
+                auto item = new  QCustom3DItem();
+                auto vec  = QVector3D(xr, yr, zr);
+                auto end = QVector3D(xr, yr, zr) + vec;
+                item->setScaling(QVector3D(0.07f, vec.length() / 200, 0.07f));
+                item->setMeshFile(QStringLiteral(":/arrow.obj"));
+                item->setTextureImage(sunColor);
+                item->setPosition(QVector3D(xr, yr, zr));
+                m_graph->addCustomItem(item);
             }
         }
-
+    }
 
     m_graph->addSeries(m_magneticField);
     //m_graph->addCustomItem(m_sun);

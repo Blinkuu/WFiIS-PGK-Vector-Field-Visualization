@@ -9,13 +9,14 @@
 #include <QtWidgets/QLineEdit>
 #include <QtGui/QScreen>
 #include <QApplication>
+#include <QPointer>
 
 #include "scatter.h"
 
 int main(int argc, char *argv[])
 { 
     QApplication app(argc, argv);
-    Q3DScatter *graph = new Q3DScatter();
+    QPointer<Q3DScatter> graph = new Q3DScatter();
     QWidget *container = QWidget::createWindowContainer(graph);
 
     if (!graph->hasContext()) {
@@ -31,69 +32,85 @@ int main(int argc, char *argv[])
     container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     container->setFocusPolicy(Qt::StrongFocus);
 
-    QWidget *widget = new QWidget;
-    QHBoxLayout *hLayout = new QHBoxLayout(widget);
-    QVBoxLayout *vLayout = new QVBoxLayout();
+    QPointer<QWidget> widget = new QWidget;
+    QPointer<QHBoxLayout> hLayout = new QHBoxLayout(widget);
+    QPointer<QVBoxLayout> vLayout = new QVBoxLayout();
     hLayout->addWidget(container, 1);
     hLayout->addLayout(vLayout);
 
+
     widget->setWindowTitle(QStringLiteral("Vector field visualization"));
 
-    QPushButton *toggleRotationButton = new QPushButton(widget);
-    toggleRotationButton->setText(QStringLiteral("Toggle animation"));
-    QPushButton *toggleSunButton = new QPushButton(widget);
-    toggleSunButton->setText(QStringLiteral("Toggle Sun"));
-
-    QSlider *fieldLinesSlider = new QSlider(Qt::Horizontal, widget);
+    QPointer<QSlider> fieldLinesSlider = new QSlider(Qt::Horizontal, widget);
     fieldLinesSlider->setTickInterval(1);
     fieldLinesSlider->setMinimum(1);
     fieldLinesSlider->setValue(12);
     fieldLinesSlider->setMaximum(128);
 
-    QSlider *arrowsSlider = new QSlider(Qt::Horizontal, widget);
+    QPointer<QSlider> arrowsSlider = new QSlider(Qt::Horizontal, widget);
     arrowsSlider->setTickInterval(1);
     arrowsSlider->setMinimum(8);
     arrowsSlider->setValue(16);
     arrowsSlider->setMaximum(32);
 
     // Layout
-    QVBoxLayout *vTopLayout = new QVBoxLayout();
-    QHBoxLayout *hXLayout = new QHBoxLayout();
-    QHBoxLayout *hYLayout = new QHBoxLayout();
-    QHBoxLayout *hZLayout = new QHBoxLayout();
-    QHBoxLayout *hSegLayout = new QHBoxLayout();
+    QPointer<QVBoxLayout> vTopLayout = new QVBoxLayout();
+    QPointer<QHBoxLayout> hXLayout = new QHBoxLayout();
+    QPointer<QHBoxLayout> hYLayout = new QHBoxLayout();
+    QPointer<QHBoxLayout> hZLayout = new QHBoxLayout();
+    QPointer<QHBoxLayout> hSegLayout = new QHBoxLayout();
 
     vLayout->addLayout(vTopLayout);
-    vLayout->addLayout(hSegLayout);
-    vLayout->addLayout(hXLayout);
-    vLayout->addLayout(hYLayout);
-    vLayout->addLayout(hZLayout);
+    vTopLayout->addWidget(new QLabel(QStringLiteral("Przedział zmienności argumentów:")));
+    vTopLayout->addLayout(hXLayout);
+    vTopLayout->addLayout(hYLayout);
+    vTopLayout->addLayout(hZLayout);
+    vTopLayout->addWidget(new QLabel(QStringLiteral("Ilość podprzedziałów:")));
+    vTopLayout->addLayout(hSegLayout);
     //
 
     // Set ranges
-    QLineEdit *xRange1 = new QLineEdit(widget);
+    QPointer<QLineEdit> xRange1 = new QLineEdit(widget);
     xRange1->setPlaceholderText(QString("x1"));
-    QLineEdit *xRange2 = new QLineEdit(widget);
+    xRange1->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    xRange1->setMaximumSize(50,200);
+    QPointer<QLineEdit> xRange2 = new QLineEdit(widget);
     xRange2->setPlaceholderText(QString("x2"));
+    xRange2->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    xRange2->setMaximumSize(50,200);
 
-    QLineEdit *yRange1 = new QLineEdit(widget);
+    QPointer<QLineEdit> yRange1 = new QLineEdit(widget);
     yRange1->setPlaceholderText(QString("y1"));
-    QLineEdit *yRange2 = new QLineEdit(widget);
+    yRange1->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    yRange1->setMaximumSize(50,200);
+    QPointer<QLineEdit> yRange2 = new QLineEdit(widget);
     yRange2->setPlaceholderText(QString("y2"));
+    yRange2->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    yRange2->setMaximumSize(50,200);
 
-    QLineEdit *zRange1 = new QLineEdit(widget);
+    QPointer<QLineEdit> zRange1 = new QLineEdit(widget);
     zRange1->setPlaceholderText(QString("z1"));
-    QLineEdit *zRange2 = new QLineEdit(widget);
+    zRange1->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    zRange1->setMaximumSize(50,200);
+    QPointer<QLineEdit> zRange2 = new QLineEdit(widget);
     zRange2->setPlaceholderText(QString("z2"));
+    zRange2->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    zRange2->setMaximumSize(50,200);
     //
 
     // Set segments
-    QLineEdit *xSeg = new QLineEdit(widget);
+    QPointer<QLineEdit> xSeg = new QLineEdit(widget);
     xSeg->setPlaceholderText(QString("10"));
-    QLineEdit *ySeg = new QLineEdit(widget);
+    xSeg->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    xSeg->setMaximumSize(50,200);
+    QPointer<QLineEdit> ySeg = new QLineEdit(widget);
     ySeg->setPlaceholderText(QString("10"));
-    QLineEdit *zSeg = new QLineEdit(widget);
+    ySeg->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    ySeg->setMaximumSize(50,200);
+    QPointer<QLineEdit> zSeg = new QLineEdit(widget);
     zSeg->setPlaceholderText(QString("10"));
+    zSeg->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    zSeg->setMaximumSize(50,200);
     //
 
     // Bottom layout
@@ -112,20 +129,14 @@ int main(int argc, char *argv[])
     //
 
     // Top layout
-    vTopLayout->addWidget(toggleRotationButton);
-    vTopLayout->addWidget(toggleSunButton);
     vTopLayout->addWidget(new QLabel(QStringLiteral("Field Lines (1 - 128):")));
     vTopLayout->addWidget(fieldLinesSlider);
     vTopLayout->addWidget(new QLabel(QStringLiteral("Arrows per line (8 - 32):")));
     vTopLayout->addWidget(arrowsSlider, 1, Qt::AlignTop);
     //
 
-    Scatter *modifier = new Scatter(graph);
+    QPointer<Scatter> modifier = new Scatter(graph);
 
-    QObject::connect(toggleRotationButton, &QPushButton::clicked, modifier,
-                     &Scatter::toggleRotation);
-    QObject::connect(toggleSunButton, &QPushButton::clicked, modifier,
-                     &Scatter::toggleSun);
     QObject::connect(fieldLinesSlider, &QSlider::valueChanged, modifier,
                      &Scatter::setFieldLines);
     QObject::connect(arrowsSlider, &QSlider::valueChanged, modifier,
