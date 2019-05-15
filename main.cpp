@@ -17,7 +17,7 @@
 int main(int argc, char *argv[]) {
   QApplication app(argc, argv);
   QPointer<Q3DScatter> graph = new Q3DScatter();
-  QWidget *container = QWidget::createWindowContainer(graph);
+  QPointer<QWidget> container = QWidget::createWindowContainer(graph);
 
   if (!graph->hasContext()) {
     QMessageBox msgBox;
@@ -33,6 +33,7 @@ int main(int argc, char *argv[]) {
   container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   container->setFocusPolicy(Qt::StrongFocus);
 
+  // Main frame and layout
   QPointer<QWidget> widget = new QWidget;
   QPointer<QHBoxLayout> hLayout = new QHBoxLayout(widget);
   QPointer<QVBoxLayout> vLayout = new QVBoxLayout();
@@ -41,21 +42,19 @@ int main(int argc, char *argv[]) {
 
   widget->setWindowTitle(QStringLiteral("Vector field visualization"));
 
-  // Layout
-  QPointer<QVBoxLayout> vTopLayout = new QVBoxLayout();
+  // Additional layouts
   QPointer<QHBoxLayout> hXLayout = new QHBoxLayout();
   QPointer<QHBoxLayout> hYLayout = new QHBoxLayout();
   QPointer<QHBoxLayout> hZLayout = new QHBoxLayout();
   QPointer<QHBoxLayout> hSegLayout = new QHBoxLayout();
 
-  vLayout->addLayout(vTopLayout);
-  vTopLayout->addWidget(
-      new QLabel(QStringLiteral("Przedział zmienności argumentów:")));
-  vTopLayout->addLayout(hXLayout);
-  vTopLayout->addLayout(hYLayout);
-  vTopLayout->addLayout(hZLayout);
-  vTopLayout->addWidget(new QLabel(QStringLiteral("Ilość podprzedziałów:")));
-  vTopLayout->addLayout(hSegLayout);
+  //vLayout->addLayout(vTopLayout);
+  vLayout->addWidget(new QLabel(QStringLiteral("Przedział zmienności argumentów:")));
+  vLayout->addLayout(hXLayout);
+  vLayout->addLayout(hYLayout);
+  vLayout->addLayout(hZLayout);
+  vLayout->addWidget(new QLabel(QStringLiteral("Ilość podprzedziałów:")));
+  vLayout->addLayout(hSegLayout);
   //
 
   // Set ranges
@@ -108,8 +107,8 @@ int main(int argc, char *argv[]) {
   arrowsLengthSlider->setMinimum(1);
   arrowsLengthSlider->setValue(50);
   arrowsLengthSlider->setMaximum(100);
-  vTopLayout->addWidget(new QLabel(QStringLiteral("Długość wektora:")));
-  vTopLayout->addWidget(arrowsLengthSlider);
+  vLayout->addWidget(new QLabel(QStringLiteral("Długość wektora:")));
+  vLayout->addWidget(arrowsLengthSlider);
   //
 
   // Function combobox
@@ -119,7 +118,16 @@ int main(int argc, char *argv[]) {
   functionComboBox->addItem("Function " + QString::number(++funCounter));
   functionComboBox->addItem("Function " + QString::number(++funCounter));
   functionComboBox->addItem("Function " + QString::number(++funCounter));
-  vTopLayout->addWidget(functionComboBox);
+  vLayout->addWidget(new QLabel(QStringLiteral("Wybierz funkcję:")));
+  vLayout->addWidget(functionComboBox);
+  //
+
+  // Theme combobox
+  QPointer<QComboBox> themeComboBox = new QComboBox();
+  themeComboBox->addItem("Biały motyw");
+  themeComboBox->addItem("Czarny motyw");
+  vLayout->addWidget(new QLabel(QStringLiteral("Wybierz motyw:")));
+  vLayout->addWidget(themeComboBox);
   //
 
   // Bottom layout
@@ -163,7 +171,10 @@ int main(int argc, char *argv[]) {
                    &Scatter::setArrowsLength);
 
   QObject::connect(functionComboBox, SIGNAL(currentIndexChanged(int)), modifier,
-                   SLOT(comboboxItemChanged(int)));
+                   SLOT(functionboxItemChanged(int)));
+
+  QObject::connect(themeComboBox, SIGNAL(currentIndexChanged(int)), modifier,
+                   SLOT(themeboxItemChanged(int)));
 
   widget->show();
   return app.exec();

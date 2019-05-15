@@ -28,7 +28,8 @@ public Q_SLOTS:
     void setZRange(const QString& x);
 
     void setArrowsLength(int arrowLength);
-    void comboboxItemChanged(int index);
+    void functionboxItemChanged(int index);
+    void themeboxItemChanged(int index);
 
 private:
     Q3DScatter *m_graph;

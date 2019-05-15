@@ -29,7 +29,7 @@ Scatter::Scatter(Q3DScatter *scatter)
   m_graph->setShadowQuality(QAbstract3DGraph::ShadowQualityNone);
   m_graph->scene()->activeCamera()->setCameraPreset(Q3DCamera::CameraPresetFront);
   m_graph->customItems().clear();
-  m_graph->activeTheme()->setType(Q3DTheme::ThemeEbony);
+  m_graph->activeTheme()->setType(Q3DTheme::ThemeQt);
   m_graph->axisX()->setRange(m_xRange.first, m_xRange.second);
   m_graph->axisY()->setRange(m_yRange.first, m_yRange.second);
   m_graph->axisZ()->setRange(m_zRange.first, m_zRange.second);
@@ -39,10 +39,15 @@ Scatter::Scatter(Q3DScatter *scatter)
   generateData();
 }
 
-Scatter::~Scatter() { delete m_graph; }
+Scatter::~Scatter() {
+  m_graph->removeCustomItems();
+  delete m_graph;
+}
 
 void Scatter::generateData() {
+
   m_graph->removeCustomItems();
+  m_graph->clearSelection();
 
   QImage sunColor = QImage(2, 2, QImage::Format_RGB32);
   sunColor.fill(QColor(0xff, 0xbb, 0x00));
@@ -74,7 +79,7 @@ void Scatter::generateData() {
 
         auto vec = m_function(QVector3D(xr, yr, zr));
         auto item = new QCustom3DItem();
-        item->setScaling(QVector3D(0.05f, m_arrowLength/1000.0f, 0.05f));
+        item->setScaling(QVector3D(0.05f, m_arrowLength / 1000.0f * vec.lengthSquared() / max, 0.05f));
         item->setMeshFile(QStringLiteral(":/arrow.obj"));
         auto out = static_cast<unsigned char>(abs((lengths[i] - min) * 255 / (max - min)));
         QImage sunColor = QImage(2, 2, QImage::Format_RGB32);
@@ -189,7 +194,7 @@ void Scatter::setArrowsLength(int arrowLength) {
     generateData();
 }
 
-void Scatter::comboboxItemChanged(int index) {
+void Scatter::functionboxItemChanged(int index) {
     if(index == 0)
         m_function = [](const QVector3D&& vec){ return QVector3D(vec.x(), vec.y(), vec.z()); };
     else if(index == 1)
@@ -197,4 +202,11 @@ void Scatter::comboboxItemChanged(int index) {
     else
         m_function = [](const QVector3D&& vec){ return QVector3D(vec.x(), vec.y(), vec.z()); };
     generateData();
+}
+
+void Scatter::themeboxItemChanged(int index) {
+    if(index == 0)
+        m_graph->activeTheme()->setType(Q3DTheme::ThemeQt);
+    else if(index == 1)
+        m_graph->activeTheme()->setType(Q3DTheme::ThemeEbony);
 }
