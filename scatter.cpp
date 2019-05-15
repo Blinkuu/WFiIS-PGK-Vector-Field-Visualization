@@ -56,7 +56,7 @@ void Scatter::generateData() {
   for (float xr = m_xRange.first; xr <= m_xRange.second; xr += (m_xRange.second - m_xRange.first) / axisX->segmentCount()) {
     for (float yr = m_yRange.first; yr <= m_yRange.second; yr += (m_yRange.second - m_yRange.first) / axisY->segmentCount()) {
       for (float zr = m_zRange.first; zr <= m_zRange.second; zr += (m_zRange.second - m_zRange.first) / axisZ->segmentCount()) {
-        auto vec = QVector3D(xr, yr, zr);
+        auto vec = m_function(QVector3D(xr, yr, zr));
         lengths.push_back(vec.lengthSquared());
         if (vec.lengthSquared() > max) {
           max = vec.lengthSquared();
@@ -193,7 +193,7 @@ void Scatter::comboboxItemChanged(int index) {
     if(index == 0)
         m_function = [](const QVector3D&& vec){ return QVector3D(vec.x(), vec.y(), vec.z()); };
     else if(index == 1)
-        m_function = [](const QVector3D&& vec){ return QVector3D{vec.y() * vec.z(), vec.x() * vec.z(), vec.x() * vec.y()}; };
+        m_function = [](const QVector3D&& vec){ return QVector3D(vec.y() * vec.z(), vec.x() * vec.z(), vec.x() * vec.y()); };
     else
         m_function = [](const QVector3D&& vec){ return QVector3D(vec.x(), vec.y(), vec.z()); };
     generateData();
