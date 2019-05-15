@@ -32,6 +32,7 @@ public Q_SLOTS:
 
     void setArrowsLength(int arrowLength);
     void functionboxItemChanged(int index);
+    void lengthboxItemChanged(int index);
     void themeboxItemChanged(int index);
 
 private:
@@ -46,6 +47,7 @@ private:
     float m_a = 1.0f;
     float m_b = 1.0f;
     float m_c = 1.0f;
+    int m_lenghtOption = 0;
 
     int m_arrowLength;
 };

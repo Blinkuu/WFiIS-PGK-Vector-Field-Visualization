@@ -18,6 +18,20 @@ constexpr float horizontalRange = verticalRange;
 constexpr float doublePi = static_cast<float>(M_PI) * 2.0f;
 constexpr float radiansToDegrees = 360.0f / doublePi;
 
+float minimum(float a, float b, float c){
+    if(a < b){
+        if(a < c){
+            return a;
+        }
+    }
+    if (b < c){
+        return b;
+    } else {
+        return c;
+    }
+}
+
+
 Scatter::Scatter(Q3DScatter *scatter)
  : m_graph(scatter),
    m_function([](const QVector3D&& vec, float , float, float){ return QVector3D(vec.x(), vec.y(), vec.z()); }),
@@ -72,14 +86,24 @@ void Scatter::generateData() {
     }
   }
 
+  float stepx = (m_xRange.second - m_xRange.first) / axisX->segmentCount();
+  float stepy = (m_yRange.second - m_yRange.first) / axisY->segmentCount();
+  float stepz = (m_zRange.second - m_zRange.first) / axisZ->segmentCount();
   int i = 0;
-  for (float xr = m_xRange.first; xr <= m_xRange.second; xr += (m_xRange.second - m_xRange.first) / axisX->segmentCount()) {
-    for (float yr = m_yRange.first; yr <= m_yRange.second; yr += (m_yRange.second - m_yRange.first) / axisY->segmentCount()) {
-      for (float zr = m_zRange.first; zr <= m_zRange.second; zr += (m_zRange.second - m_zRange.first) / axisZ->segmentCount()) {
+  for (float xr = m_xRange.first; xr <= m_xRange.second; xr += stepx) {
+    for (float yr = m_yRange.first; yr <= m_yRange.second; yr += stepy) {
+      for (float zr = m_zRange.first; zr <= m_zRange.second; zr += stepz) {
 
         auto vec = m_function(QVector3D(xr, yr, zr), m_a, m_b, m_c);
         auto item = new QCustom3DItem();
-        item->setScaling(QVector3D(0.05f, m_arrowLength / 300.0f * vec.lengthSquared() / max, 0.05f));
+        if(m_lenghtOption == 0){
+            item->setScaling(QVector3D(0.05f, vec.lengthSquared() / max * minimum(stepx, stepy, stepz) / 10, 0.05f));
+        } else if (m_lenghtOption == 1) {
+            item->setScaling(QVector3D(0.07f, 0.12f, 0.07f));
+        } else {
+            item->setScaling(QVector3D(0.05f, m_arrowLength / 300.0f * vec.lengthSquared() / max, 0.05f));
+        }
+
         item->setMeshFile(QStringLiteral(":/arrow.obj"));
         auto out = static_cast<unsigned char>(abs((lengths[i] - min) * 255 / (max - min)));
         QImage sunColor = QImage(2, 2, QImage::Format_RGB32);
@@ -226,5 +250,10 @@ void Scatter::setB(const QString& b){
 
 void Scatter::setC(const QString& c){
     m_c = c.toInt();
+    generateData();
+}
+
+void Scatter::lengthboxItemChanged(int index){
+    m_lenghtOption = index;
     generateData();
 }
