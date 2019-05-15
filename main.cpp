@@ -41,18 +41,6 @@ int main(int argc, char *argv[])
 
     widget->setWindowTitle(QStringLiteral("Vector field visualization"));
 
-    QPointer<QSlider> fieldLinesSlider = new QSlider(Qt::Horizontal, widget);
-    fieldLinesSlider->setTickInterval(1);
-    fieldLinesSlider->setMinimum(1);
-    fieldLinesSlider->setValue(12);
-    fieldLinesSlider->setMaximum(128);
-
-    QPointer<QSlider> arrowsSlider = new QSlider(Qt::Horizontal, widget);
-    arrowsSlider->setTickInterval(1);
-    arrowsSlider->setMinimum(8);
-    arrowsSlider->setValue(16);
-    arrowsSlider->setMaximum(32);
-
     // Layout
     QPointer<QVBoxLayout> vTopLayout = new QVBoxLayout();
     QPointer<QHBoxLayout> hXLayout = new QHBoxLayout();
@@ -128,19 +116,7 @@ int main(int argc, char *argv[])
     hZLayout->addWidget(zRange2);
     //
 
-    // Top layout
-    vTopLayout->addWidget(new QLabel(QStringLiteral("Field Lines (1 - 128):")));
-    vTopLayout->addWidget(fieldLinesSlider);
-    vTopLayout->addWidget(new QLabel(QStringLiteral("Arrows per line (8 - 32):")));
-    vTopLayout->addWidget(arrowsSlider, 1, Qt::AlignTop);
-    //
-
     QPointer<Scatter> modifier = new Scatter(graph);
-
-    QObject::connect(fieldLinesSlider, &QSlider::valueChanged, modifier,
-                     &Scatter::setFieldLines);
-    QObject::connect(arrowsSlider, &QSlider::valueChanged, modifier,
-                     &Scatter::setArrowsPerLine);
 
     QObject::connect(xRange1, SIGNAL(textChanged(QString)), modifier, SLOT(setXFirst(QString)));
     QObject::connect(xRange2, SIGNAL(textChanged(QString)), modifier, SLOT(setXSecond(QString)));

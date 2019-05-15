@@ -16,12 +16,6 @@ public:
     void generateData();
 
 public Q_SLOTS:
-    void setFieldLines(int lines);
-    void setArrowsPerLine(int arrows);
-    void toggleRotation();
-    void triggerRotation();
-    void toggleSun();
-
     void setXFirst(const QString& x);
     void setXSecond(const QString& x);
     void setYFirst(const QString& y);

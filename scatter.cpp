@@ -1,13 +1,15 @@
-#include "scatter.h"
+﻿#include "scatter.h"
+#include <QtCore/qmath.h>
+#include <QtDataVisualization/QCustom3DItem>
+#include <QtDataVisualization/q3dcamera.h>
+#include <QtDataVisualization/q3dscene.h>
+#include <QtDataVisualization/q3dtheme.h>
+#include <QtDataVisualization/qscatter3dseries.h>
 #include <QtDataVisualization/qscatterdataproxy.h>
 #include <QtDataVisualization/qvalue3daxis.h>
-#include <QtDataVisualization/q3dscene.h>
-#include <QtDataVisualization/q3dcamera.h>
-#include <QtDataVisualization/qscatter3dseries.h>
-#include <QtDataVisualization/q3dtheme.h>
-#include <QtDataVisualization/QCustom3DItem>
-#include <QtCore/qmath.h>
 #include <iostream>
+
+#include <Qt3DCore/QTransform>
 
 using namespace QtDataVisualization;
 
@@ -18,13 +20,9 @@ static constexpr float animationFrames = 30.0f;
 static constexpr float radiansToDegrees = 360.0f / doublePi;
 
 Scatter::Scatter(Q3DScatter *scatter)
-    : m_graph(scatter),
-      m_fieldLines(12),
-      m_arrowsPerLine(16),
-      m_magneticField(new QScatter3DSeries),
-      m_sun(new QCustom3DItem),
-      m_vec(new QCustom3DItem),
-      m_magneticFieldArray(nullptr),
+    : m_graph(scatter), m_fieldLines(12), m_arrowsPerLine(16),
+      m_magneticField(new QScatter3DSeries), m_sun(new QCustom3DItem),
+      m_vec(new QCustom3DItem), m_magneticFieldArray(nullptr),
       m_angleOffset(0.0f),
       m_angleStep(doublePi / m_arrowsPerLine / animationFrames),
       m_xRange(-horizontalRange, horizontalRange),
@@ -32,248 +30,204 @@ Scatter::Scatter(Q3DScatter *scatter)
       m_zRange(-horizontalRange, horizontalRange),
       m_xSegments(static_cast<int>(horizontalRange)),
       m_ySegments(static_cast<int>(verticalRange)),
-      m_zSegments(static_cast<int>(horizontalRange))
-{
-    m_graph->setShadowQuality(QAbstract3DGraph::ShadowQualityNone);
-    m_graph->scene()->activeCamera()->setCameraPreset(Q3DCamera::CameraPresetFront);
+      m_zSegments(static_cast<int>(horizontalRange)) {
+  m_graph->setShadowQuality(QAbstract3DGraph::ShadowQualityNone);
+  m_graph->scene()->activeCamera()->setCameraPreset(
+      Q3DCamera::CameraPresetFront);
 
-    // Magnetic field lines use custom narrow arrow
-    m_magneticField->setItemSize(0.2f);
-    //! [3]
-    m_magneticField->setMesh(QAbstract3DSeries::MeshUserDefined);
-    m_magneticField->setUserDefinedMesh(QStringLiteral(":/arrow.obj"));
-    //! [3]
-    //! [4]
-    QLinearGradient fieldGradient(0, 0, 16, 1024);
-    fieldGradient.setColorAt(0.0, Qt::yellow);
-    fieldGradient.setColorAt(1.0, Qt::red);
-    m_magneticField->setBaseGradient(fieldGradient);
-    m_magneticField->setColorStyle(Q3DTheme::ColorStyleRangeGradient);
-    //! [4]
+  // Magnetic field lines use custom narrow arrow
+  m_magneticField->setItemSize(0.2f);
+  //! [3]
+  m_magneticField->setMesh(QAbstract3DSeries::MeshUserDefined);
+  m_magneticField->setUserDefinedMesh(QStringLiteral(":/arrow.obj"));
+  //! [3]
+  //! [4]
+  QLinearGradient fieldGradient(0, 0, 16, 1024);
+  fieldGradient.setColorAt(0.0, Qt::yellow);
+  fieldGradient.setColorAt(1.0, Qt::red);
+  m_magneticField->setBaseGradient(fieldGradient);
+  m_magneticField->setColorStyle(Q3DTheme::ColorStyleRangeGradient);
+  //! [4]
 
-    // For 'sun' we use a custom large sphere
-    // m_sun->setScaling(QVector3D(0.07f, 0.07f, 0.07f));
-    // m_sun->setMeshFile(QStringLiteral(":/sphere.obj"));
-    QImage sunColor = QImage(2, 2, QImage::Format_RGB32);
-    sunColor.fill(QColor(0xff, 0xbb, 0x00));
-    //    m_sun->setTextureImage(sunColor);
+  m_graph->customItems().clear();
+  m_graph->activeTheme()->setType(Q3DTheme::ThemeEbony);
 
-    m_vec->setScaling(QVector3D(0.07f, 1.f, 0.07f));
-    m_vec->setMeshFile(QStringLiteral(":/arrow.obj"));
-    m_vec->setTextureImage(sunColor);
-    m_vec->setPosition(QVector3D(1.0f, 1.0f, 1.0f));
+  // Configure the axes according to the data
+  m_graph->axisX()->setRange(m_xRange.first, m_xRange.second);
+  m_graph->axisY()->setRange(m_yRange.first, m_yRange.second);
+  m_graph->axisZ()->setRange(m_zRange.first, m_zRange.second);
+  m_graph->axisX()->setSegmentCount(static_cast<int>(horizontalRange));
+  m_graph->axisZ()->setSegmentCount(static_cast<int>(horizontalRange));
 
-    for (float xr = m_xRange.first; xr <= m_xRange.second; xr += 2.0f) {
-        for (float yr = m_yRange.first; yr <= m_yRange.second; yr += 2.0f) {
-            for(float zr = m_zRange.first; zr <= m_zRange.second; zr += 2.0f){
-                auto vec  = QVector3D(xr, yr, zr);
-                auto item = new QCustom3DItem();
-                auto end = QVector3D(xr, yr, zr) + vec;
-                item->setScaling(QVector3D(0.07f, vec.length() / 200, 0.07f));
-                item->setMeshFile(QStringLiteral(":/arrow.obj"));
-                item->setTextureImage(sunColor);
-                item->setPosition(QVector3D(xr, yr, zr));
+  generateData();
+}
 
-                double zrot = 0.0;
-                auto xy = QVector2D(vec.x(), vec.y());
-                zrot = qAtan2(xy.x(), xy.y());
-                QQuaternion zRotation = QQuaternion::fromAxisAndAngle(0.0f, 0.0f, 1.0f, zrot * radiansToDegrees);
+Scatter::~Scatter() { delete m_graph; }
 
-                double yrot = 0.0;
-                auto xz = QVector2D(vec.x(), vec.z());
-                yrot = qAtan2(xz.x(), xz.y());
-                QQuaternion yRotation = QQuaternion::fromAxisAndAngle(0.0f, 1.0f, 0.0f, yrot * radiansToDegrees);
+void Scatter::generateData() {
+  m_graph->removeCustomItems();
 
-                double xrot = 0.0;
-                auto yz = QVector2D(vec.z(), vec.y());
-                xrot = -qAtan2(yz.x(), yz.y());
-                QQuaternion xRotation = QQuaternion::fromAxisAndAngle(1.0f, 0.0f, 0.0f, xrot * radiansToDegrees);
+  QImage sunColor = QImage(2, 2, QImage::Format_RGB32);
+  sunColor.fill(QColor(0xff, 0xbb, 0x00));
+  //    m_sun->setTextureImage(sunColor);
 
-                //item->setRotation(xRotation *  yRotation  *  zRotation);
-                item->setRotationAxisAndAngle(QVector3D(0.0f, 0.0f, 1.0f), zrot * radiansToDegrees);
-                item->setRotationAxisAndAngle(QVector3D(0.0f, 1.0f, 0.0f), yrot * radiansToDegrees);
-                item->setRotationAxisAndAngle(QVector3D(1.0f, 0.0f, 0.0f), xrot * radiansToDegrees);
-                //std::cout << zrot * radiansToDegrees << "\n";
-
-                m_graph->addCustomItem(item);
-            }
+  float min = 0.;
+  float max = 0.;
+  std::vector<float> lengths;
+  QValue3DAxis *axisX = m_graph->axisX();
+  QValue3DAxis *axisY = m_graph->axisY();
+  QValue3DAxis *axisZ = m_graph->axisZ();
+  for (float xr = m_xRange.first; xr <= m_xRange.second;
+       xr += (m_xRange.second - m_xRange.first) / axisX->segmentCount()) {
+    for (float yr = m_yRange.first; yr <= m_yRange.second;
+         yr += (m_yRange.second - m_yRange.first) / axisY->segmentCount()) {
+      for (float zr = m_zRange.first; zr <= m_zRange.second;
+           zr += (m_zRange.second - m_zRange.first) / axisZ->segmentCount()) {
+        auto vec = QVector3D(xr, yr, zr);
+        lengths.push_back(vec.lengthSquared());
+        if (vec.lengthSquared() > max) {
+          max = vec.lengthSquared();
+        } else if (vec.lengthSquared() < min) {
+          min = vec.lengthSquared();
         }
+      }
     }
+  }
 
-    m_graph->addSeries(m_magneticField);
-    //m_graph->addCustomItem(m_sun);
-    m_graph->addCustomItem(m_vec);
-    m_graph->customItems().clear();
+  auto fun1 = [](const QVector3D &&vec) {
+    return QVector3D{vec.x(), vec.y(), vec.z()};
+  };
 
-    // Configure the axes according to the data
-    m_graph->axisX()->setRange(m_xRange.first, m_xRange.second);
-    m_graph->axisY()->setRange(m_yRange.first, m_yRange.second);
-    m_graph->axisZ()->setRange(m_zRange.first, m_zRange.second);
-    m_graph->axisX()->setSegmentCount(int(horizontalRange));
-    m_graph->axisZ()->setSegmentCount(int(horizontalRange));
+  auto fun2 = [](const QVector3D &&vec) {
+    return QVector3D{vec.y() * vec.z(), vec.x() * vec.z(), vec.x() * vec.y()};
+  };
 
-    QObject::connect(&m_rotationTimer, &QTimer::timeout, this,
-                     &Scatter::triggerRotation);
+  int i = 0;
+  for (float xr = m_xRange.first; xr <= m_xRange.second;
+       xr += (m_xRange.second - m_xRange.first) / axisX->segmentCount()) {
+    for (float yr = m_yRange.first; yr <= m_yRange.second;
+         yr += (m_yRange.second - m_yRange.first) / axisY->segmentCount()) {
+      for (float zr = m_zRange.first; zr <= m_zRange.second;
+           zr += (m_zRange.second - m_zRange.first) / axisZ->segmentCount()) {
 
-    toggleRotation();
-    generateData();
+        auto vec = fun1(QVector3D(xr, yr, zr));
+        auto item = new QCustom3DItem();
+        auto end = QVector3D(xr, yr, zr) + vec;
+        item->setScaling(QVector3D(0.05f, 0.05, 0.05f));
+        item->setMeshFile(QStringLiteral(":/arrow.obj"));
+        auto out = static_cast<unsigned char>(
+            fabs((lengths[i] - min) * 255 / (max - min)));
+        QImage sunColor = QImage(2, 2, QImage::Format_RGB32);
+        sunColor.fill(
+            QColor(static_cast<int>(out), 0, static_cast<int>(255 - out)));
+        item->setTextureImage(sunColor);
+        i++;
+
+        Qt3DCore::QTransform rotateTransform;
+        auto up = QVector3D(0, 1, 0);
+
+        // rotation
+        auto angle = qAcos(QVector3D::dotProduct(up, vec) / vec.length());
+        auto axis = QVector3D::crossProduct(up, vec);
+        auto rot = QQuaternion::fromAxisAndAngle(axis, angle * radiansToDegrees);
+        auto roty = QQuaternion::fromAxisAndAngle(0.0f, 1.0f, 0.0f, (xr >= 0.0f && zr >= 0.0f) || (xr <= 0.0f && zr <= 0.0f) ? 90.0f : -90.0f);
+        if (xr == 0.0f) { roty = QQuaternion::fromAxisAndAngle(0.0f, 1.0f, 0.0f, 180.0f);
+          item->setRotation(roty * rot);
+        }else if (zr == 0.0f) {
+          item->setRotation(rot);
+        } else {
+          item->setRotation(roty * rot);
+        }
+
+        item->setPosition(QVector3D(xr, yr, zr));
+        m_graph->addCustomItem(item);
+      }
+    }
+  }
 }
 
-Scatter::~Scatter()
-{
-    delete m_graph;
+void Scatter::setXFirst(const QString &x) {
+  QValue3DAxis *axis = m_graph->axisX();
+
+  !x.isEmpty() && x.toFloat() < 0.0f ? m_xRange.first = x.toFloat()
+                                     : m_xRange.first = -10.0f;
+
+  axis->setRange(m_xRange.first, m_xRange.second);
+  generateData();
 }
 
-void Scatter::generateData()
-{
-    // Reusing existing array is computationally cheaper than always generating new array, even if
-    // all data items change in the array, if the array size doesn't change.
-    // if (!m_magneticFieldArray)
-    //     m_magneticFieldArray = new QScatterDataArray;
+void Scatter::setXSecond(const QString &x) {
+  QValue3DAxis *axis = m_graph->axisX();
 
-    // int arraySize = m_fieldLines * m_arrowsPerLine;
-    // if (arraySize != m_magneticFieldArray->size())
-    //     m_magneticFieldArray->resize(arraySize);
+  !x.isEmpty() && x.toFloat() > 0.0f ? m_xRange.second = x.toFloat()
+                                     : m_xRange.second = 10.0f;
 
-    // QScatterDataItem *ptrToDataArray = &m_magneticFieldArray->first();
-
-    // for (float i = 0; i < m_fieldLines; i++) {
-    //     float horizontalAngle = (doublePi * i) / m_fieldLines;
-    //     float xCenter = ellipse_a * qCos(horizontalAngle);
-    //     float zCenter = ellipse_a * qSin(horizontalAngle);
-
-    //     // Rotate - arrow always tangential to origin
-    //     //! [0]
-    //     QQuaternion yRotation = QQuaternion::fromAxisAndAngle(0.0f, 1.0f, 0.0f, horizontalAngle * radiansToDegrees);
-    //     //! [0]
-
-    //     for (float j = 0; j < m_arrowsPerLine; j++) {
-    //         // Calculate point on ellipse centered on origin and parallel to x-axis
-    //         float verticalAngle = ((doublePi * j) / m_arrowsPerLine) + m_angleOffset;
-    //         float xUnrotated = ellipse_a * qCos(verticalAngle);
-    //         float y = ellipse_b * qSin(verticalAngle);
-
-    //         // Rotate the ellipse around y-axis
-    //         float xRotated = xUnrotated * qCos(horizontalAngle);
-    //         float zRotated = xUnrotated * qSin(horizontalAngle);
-
-    //         // Add offset
-    //         float x = xCenter + xRotated;
-    //         float z = zCenter + zRotated;
-
-    //         //! [1]
-    //         QQuaternion zRotation = QQuaternion::fromAxisAndAngle(0.0f, 0.0f, 1.0f, verticalAngle * radiansToDegrees);
-    //         QQuaternion totalRotation = yRotation * zRotation;
-    //         //! [1]
-
-    //         ptrToDataArray->setPosition(QVector3D(x, y, z));
-    //         //! [2]
-    //         ptrToDataArray->setRotation(totalRotation);
-    //         //! [2]
-    //         ptrToDataArray++;
-    //     }
-    // }
-
-    // if (m_graph->selectedSeries() == m_magneticField)
-    //     m_graph->clearSelection();
-
-    // m_magneticField->dataProxy()->resetArray(m_magneticFieldArray);
+  axis->setRange(m_xRange.first, m_xRange.second);
+  generateData();
 }
 
-void Scatter::setFieldLines(int lines)
-{
-    m_fieldLines = lines;
-    generateData();
+void Scatter::setYFirst(const QString &y) {
+  QValue3DAxis *axis = m_graph->axisY();
+
+  !y.isEmpty() && y.toFloat() < 0.0f ? m_yRange.first = y.toFloat()
+                                     : m_yRange.first = -10.0f;
+
+  axis->setRange(m_yRange.first, m_yRange.second);
+  generateData();
 }
 
-void Scatter::setArrowsPerLine(int arrows)
-{
-    m_angleOffset = 0.0f;
-    m_angleStep = doublePi / m_arrowsPerLine / animationFrames;
-    m_arrowsPerLine = arrows;
-    generateData();
+void Scatter::setYSecond(const QString &y) {
+  QValue3DAxis *axis = m_graph->axisY();
+
+  !y.isEmpty() && y.toFloat() > 0.0f ? m_yRange.second = y.toFloat()
+                                     : m_yRange.second = 10.0f;
+
+  axis->setRange(m_yRange.first, m_yRange.second);
+  generateData();
+}
+void Scatter::setZFirst(const QString &z) {
+  QValue3DAxis *axis = m_graph->axisZ();
+
+  !z.isEmpty() && z.toFloat() < 0.0f ? m_zRange.first = z.toFloat()
+                                     : m_zRange.first = -10.0f;
+
+  axis->setRange(m_zRange.first, m_zRange.second);
+  generateData();
 }
 
-void Scatter::triggerRotation()
-{
-    m_angleOffset += m_angleStep;
-    generateData();
+void Scatter::setZSecond(const QString &z) {
+  QValue3DAxis *axis = m_graph->axisZ();
+
+  !z.isEmpty() && z.toFloat() > 0.0f ? m_zRange.second = z.toFloat()
+                                     : m_zRange.second = 10.0f;
+
+  axis->setRange(m_zRange.first, m_zRange.second);
+  generateData();
 }
 
-void Scatter::toggleSun()
-{
-    m_sun->setVisible(!m_sun->isVisible());
+void Scatter::setXRange(const QString &x) {
+  QValue3DAxis *axis = m_graph->axisX();
+
+  !x.isEmpty() && x.toInt() > 0
+      ? axis->setSegmentCount(x.toInt())
+      : axis->setSegmentCount(static_cast<int>(horizontalRange));
+  generateData();
 }
 
-void Scatter::toggleRotation()
-{
-    if (m_rotationTimer.isActive())
-        m_rotationTimer.stop();
-    else
-        m_rotationTimer.start(15);
+void Scatter::setYRange(const QString &x) {
+  QValue3DAxis *axis = m_graph->axisY();
+
+  !x.isEmpty() && x.toInt() > 0
+      ? axis->setSegmentCount(x.toInt())
+      : axis->setSegmentCount(static_cast<int>(horizontalRange));
+  generateData();
 }
 
-void Scatter::setXFirst(const QString& x) {
-    QValue3DAxis* axis = m_graph->axisX();
+void Scatter::setZRange(const QString &x) {
+  QValue3DAxis *axis = m_graph->axisZ();
 
-    !x.isEmpty() && x.toFloat() < 0.0f ? m_xRange.first = x.toFloat() : m_xRange.first = -10.0f;
-
-    axis->setRange(m_xRange.first, m_xRange.second);
-}
-
-void Scatter::setXSecond(const QString& x) {
-    QValue3DAxis* axis = m_graph->axisX();
-
-    !x.isEmpty() && x.toFloat() > 0.0f ? m_xRange.second = x.toFloat() : m_xRange.second = 10.0f;
-
-    axis->setRange(m_xRange.first, m_xRange.second);
-}
-
-void Scatter::setYFirst(const QString& y) {
-    QValue3DAxis* axis = m_graph->axisY();
-
-    !y.isEmpty() && y.toFloat() < 0.0f ? m_yRange.first = y.toFloat() : m_yRange.first = -10.0f;
-
-    axis->setRange(m_yRange.first, m_yRange.second);
-}
-
-void Scatter::setYSecond(const QString& y) {
-    QValue3DAxis* axis = m_graph->axisY();
-
-    !y.isEmpty() && y.toFloat() > 0.0f ? m_yRange.second = y.toFloat() : m_yRange.second = 10.0f;
-
-    axis->setRange(m_yRange.first, m_yRange.second);
-}
-void Scatter::setZFirst(const QString& z) {
-    QValue3DAxis* axis = m_graph->axisZ();
-
-    !z.isEmpty() && z.toFloat() < 0.0f ? m_zRange.first = z.toFloat() : m_zRange.first = -10.0f;
-
-    axis->setRange(m_zRange.first, m_zRange.second);
-}
-
-void Scatter::setZSecond(const QString& z) {
-    QValue3DAxis* axis = m_graph->axisZ();
-
-    !z.isEmpty() && z.toFloat() > 0.0f ? m_zRange.second = z.toFloat() : m_zRange.second = 10.0f;
-
-    axis->setRange(m_zRange.first, m_zRange.second);
-}
-
-void Scatter::setXRange(const QString& x) {
-    QValue3DAxis* axis = m_graph->axisX();
-
-    !x.isEmpty() && x.toInt() > 0 ? axis->setSegmentCount(x.toInt()) : axis->setSegmentCount(static_cast<int>(horizontalRange));
-}
-
-void Scatter::setYRange(const QString& x) {
-    QValue3DAxis* axis = m_graph->axisY();
-
-    !x.isEmpty() && x.toInt() > 0 ? axis->setSegmentCount(x.toInt()) : axis->setSegmentCount(static_cast<int>(horizontalRange));
-}
-
-void Scatter::setZRange(const QString& x) {
-    QValue3DAxis* axis = m_graph->axisZ();
-
-    !x.isEmpty() && x.toInt() > 0 ? axis->setSegmentCount(x.toInt()) : axis->setSegmentCount(static_cast<int>(horizontalRange));
+  !x.isEmpty() && x.toInt() > 0
+      ? axis->setSegmentCount(x.toInt())
+      : axis->setSegmentCount(static_cast<int>(horizontalRange));
+  generateData();
 }
