@@ -22,6 +22,9 @@ public Q_SLOTS:
     void setYSecond(const QString& y);
     void setZFirst(const QString& z);
     void setZSecond(const QString& z);
+    void setA(const QString& a);
+    void setB(const QString& b);
+    void setC(const QString& c);
 
     void setXRange(const QString& x);
     void setYRange(const QString& x);
@@ -35,11 +38,14 @@ private:
     Q3DScatter *m_graph;
 
 private:
-    std::function<QVector3D(const QVector3D&&)> m_function;
+    std::function<QVector3D(const QVector3D&&, float, float, float)> m_function;
 
     QPair<float, float> m_xRange;
     QPair<float, float> m_yRange;
     QPair<float, float> m_zRange;
+    float m_a = 1.0f;
+    float m_b = 1.0f;
+    float m_c = 1.0f;
 
     int m_arrowLength;
 };

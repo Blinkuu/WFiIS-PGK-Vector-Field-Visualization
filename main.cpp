@@ -47,6 +47,7 @@ int main(int argc, char *argv[]) {
   QPointer<QHBoxLayout> hYLayout = new QHBoxLayout();
   QPointer<QHBoxLayout> hZLayout = new QHBoxLayout();
   QPointer<QHBoxLayout> hSegLayout = new QHBoxLayout();
+  QPointer<QHBoxLayout> hParLayout = new QHBoxLayout();
 
   //vLayout->addLayout(vTopLayout);
   vLayout->addWidget(new QLabel(QStringLiteral("Przedział zmienności argumentów:")));
@@ -112,15 +113,34 @@ int main(int argc, char *argv[]) {
   //
 
   // Function combobox
-  int funCounter = 0;
   QPointer<QComboBox> functionComboBox = new QComboBox();
-  functionComboBox->addItem("Function " + QString::number(++funCounter));
-  functionComboBox->addItem("Function " + QString::number(++funCounter));
-  functionComboBox->addItem("Function " + QString::number(++funCounter));
-  functionComboBox->addItem("Function " + QString::number(++funCounter));
+  functionComboBox->addItem("F(x,y,z) = v(a*x, b*y, c*z)");
+  functionComboBox->addItem("F(x,y,z) = v(a*y*z, b*x*z, c*x*y)");
+  functionComboBox->addItem("F(x, y, z) = v(a * sin(x), b * sin(y), c * sin(z))");
+  functionComboBox->addItem("F(x, y, z) = v(a * sin(x), b * sin(y), c * sin(z))");
   vLayout->addWidget(new QLabel(QStringLiteral("Wybierz funkcję:")));
   vLayout->addWidget(functionComboBox);
-  //
+  //Set a,b,c params
+  QPointer<QLineEdit> a = new QLineEdit(widget);
+  a->setPlaceholderText(QString("1"));
+  a->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+  a->setMaximumSize(50, 200);
+  QPointer<QLineEdit> b = new QLineEdit(widget);
+  b->setPlaceholderText(QString("1"));
+  b->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+  b->setMaximumSize(50, 200);
+  QPointer<QLineEdit> c = new QLineEdit(widget);
+  c->setPlaceholderText(QString("1"));
+  c->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+  c->setMaximumSize(50, 200);
+
+  hParLayout->addWidget(new QLabel(QStringLiteral(" a    =")));
+  hParLayout->addWidget(a);
+  hParLayout->addWidget(new QLabel(QStringLiteral(" b    =")));
+  hParLayout->addWidget(b);
+  hParLayout->addWidget(new QLabel(QStringLiteral(" c    =")));
+  hParLayout->addWidget(c);
+  vLayout->addLayout(hParLayout);
 
   // Theme combobox
   QPointer<QComboBox> themeComboBox = new QComboBox();
@@ -166,6 +186,13 @@ int main(int argc, char *argv[]) {
                    SLOT(setYRange(QString)));
   QObject::connect(zSeg, SIGNAL(textChanged(QString)), modifier,
                    SLOT(setZRange(QString)));
+
+  QObject::connect(a, SIGNAL(textChanged(QString)), modifier,
+                   SLOT(setA(QString)));
+  QObject::connect(b, SIGNAL(textChanged(QString)), modifier,
+                   SLOT(setB(QString)));
+  QObject::connect(c, SIGNAL(textChanged(QString)), modifier,
+                   SLOT(setC(QString)));
 
   QObject::connect(arrowsLengthSlider, &QSlider::valueChanged, modifier,
                    &Scatter::setArrowsLength);

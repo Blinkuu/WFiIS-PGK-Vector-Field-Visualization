@@ -20,7 +20,7 @@ constexpr float radiansToDegrees = 360.0f / doublePi;
 
 Scatter::Scatter(Q3DScatter *scatter)
  : m_graph(scatter),
-   m_function([](const QVector3D&& vec){ return QVector3D(vec.x(), vec.y(), vec.z()); }),
+   m_function([](const QVector3D&& vec, float , float, float){ return QVector3D(vec.x(), vec.y(), vec.z()); }),
    m_xRange(-horizontalRange, horizontalRange),
    m_yRange(-verticalRange, verticalRange),
    m_zRange(-horizontalRange, horizontalRange),
@@ -61,7 +61,7 @@ void Scatter::generateData() {
   for (float xr = m_xRange.first; xr <= m_xRange.second; xr += (m_xRange.second - m_xRange.first) / axisX->segmentCount()) {
     for (float yr = m_yRange.first; yr <= m_yRange.second; yr += (m_yRange.second - m_yRange.first) / axisY->segmentCount()) {
       for (float zr = m_zRange.first; zr <= m_zRange.second; zr += (m_zRange.second - m_zRange.first) / axisZ->segmentCount()) {
-        auto vec = m_function(QVector3D(xr, yr, zr));
+        auto vec = m_function(QVector3D(xr, yr, zr), m_a, m_b, m_c);
         lengths.push_back(vec.lengthSquared());
         if (vec.lengthSquared() > max) {
           max = vec.lengthSquared();
@@ -77,9 +77,9 @@ void Scatter::generateData() {
     for (float yr = m_yRange.first; yr <= m_yRange.second; yr += (m_yRange.second - m_yRange.first) / axisY->segmentCount()) {
       for (float zr = m_zRange.first; zr <= m_zRange.second; zr += (m_zRange.second - m_zRange.first) / axisZ->segmentCount()) {
 
-        auto vec = m_function(QVector3D(xr, yr, zr));
+        auto vec = m_function(QVector3D(xr, yr, zr), m_a, m_b, m_c);
         auto item = new QCustom3DItem();
-        item->setScaling(QVector3D(0.05f, m_arrowLength / 1000.0f * vec.lengthSquared() / max, 0.05f));
+        item->setScaling(QVector3D(0.05f, m_arrowLength / 300.0f * vec.lengthSquared() / max, 0.05f));
         item->setMeshFile(QStringLiteral(":/arrow.obj"));
         auto out = static_cast<unsigned char>(abs((lengths[i] - min) * 255 / (max - min)));
         QImage sunColor = QImage(2, 2, QImage::Format_RGB32);
@@ -196,11 +196,14 @@ void Scatter::setArrowsLength(int arrowLength) {
 
 void Scatter::functionboxItemChanged(int index) {
     if(index == 0)
-        m_function = [](const QVector3D&& vec){ return QVector3D(vec.x(), vec.y(), vec.z()); };
+        m_function = [](const QVector3D&& vec, float a = 1, float b = 1, float c = 1){ return QVector3D(a * vec.x(), b * vec.y(), c * vec.z()); };
     else if(index == 1)
-        m_function = [](const QVector3D&& vec){ return QVector3D(vec.y() * vec.z(), vec.x() * vec.z(), vec.x() * vec.y()); };
-    else
-        m_function = [](const QVector3D&& vec){ return QVector3D(vec.x(), vec.y(), vec.z()); };
+        m_function = [](const QVector3D&& vec, float a = 1, float b = 1, float c = 1){ return QVector3D(a * vec.y() * vec.z(), b * vec.x() * vec.z(), c * vec.x() * vec.y()); };
+    else if(index == 2){
+        m_function = [](const QVector3D&& vec, float a = 1, float b = 1, float c = 1){ return QVector3D(qSin(a * vec.x()), b * qSin(vec.y()), c * qSin(vec.z())); };
+    } else if(index == 3){
+        m_function = [](const QVector3D&& vec, float a = 1, float b = 1, float c = 1){ return QVector3D(a * qTan(vec.x()), b * qTan(vec.y()), c * qTan(vec.z())); };
+    }
     generateData();
 }
 
@@ -209,4 +212,19 @@ void Scatter::themeboxItemChanged(int index) {
         m_graph->activeTheme()->setType(Q3DTheme::ThemeQt);
     else if(index == 1)
         m_graph->activeTheme()->setType(Q3DTheme::ThemeEbony);
+}
+
+void Scatter::setA(const QString& a){
+    m_a = a.toInt();
+    generateData();
+}
+
+void Scatter::setB(const QString& b){
+    m_b = b.toInt();
+    generateData();
+}
+
+void Scatter::setC(const QString& c){
+    m_c = c.toInt();
+    generateData();
 }
