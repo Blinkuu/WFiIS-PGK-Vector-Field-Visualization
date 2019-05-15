@@ -1,134 +1,170 @@
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QWidget>
-#include <QtWidgets/QHBoxLayout>
-#include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QPushButton>
-#include <QtWidgets/QSlider>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QMessageBox>
-#include <QtWidgets/QLineEdit>
-#include <QtGui/QScreen>
 #include <QApplication>
 #include <QPointer>
+#include <QtGui/QScreen>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QSlider>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QWidget>
 
 #include "scatter.h"
 
-int main(int argc, char *argv[])
-{ 
-    QApplication app(argc, argv);
-    QPointer<Q3DScatter> graph = new Q3DScatter();
-    QWidget *container = QWidget::createWindowContainer(graph);
+int main(int argc, char *argv[]) {
+  QApplication app(argc, argv);
+  QPointer<Q3DScatter> graph = new Q3DScatter();
+  QWidget *container = QWidget::createWindowContainer(graph);
 
-    if (!graph->hasContext()) {
-        QMessageBox msgBox;
-        msgBox.setText("Couldn't initialize the OpenGL context.");
-        msgBox.exec();
-        return -1;
-    }
+  if (!graph->hasContext()) {
+    QMessageBox msgBox;
+    msgBox.setText("Couldn't initialize the OpenGL context.");
+    msgBox.exec();
+    return -1;
+  }
 
-    QSize screenSize = graph->screen()->size();
-    container->setMinimumSize(QSize(screenSize.width() / 8, screenSize.height() / 6));
-    container->setMaximumSize(screenSize);
-    container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    container->setFocusPolicy(Qt::StrongFocus);
+  QSize screenSize = graph->screen()->size();
+  container->setMinimumSize(
+      QSize(screenSize.width() / 8, screenSize.height() / 6));
+  container->setMaximumSize(screenSize);
+  container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  container->setFocusPolicy(Qt::StrongFocus);
 
-    QPointer<QWidget> widget = new QWidget;
-    QPointer<QHBoxLayout> hLayout = new QHBoxLayout(widget);
-    QPointer<QVBoxLayout> vLayout = new QVBoxLayout();
-    hLayout->addWidget(container, 1);
-    hLayout->addLayout(vLayout);
+  QPointer<QWidget> widget = new QWidget;
+  QPointer<QHBoxLayout> hLayout = new QHBoxLayout(widget);
+  QPointer<QVBoxLayout> vLayout = new QVBoxLayout();
+  hLayout->addWidget(container, 1);
+  hLayout->addLayout(vLayout);
 
+  widget->setWindowTitle(QStringLiteral("Vector field visualization"));
 
-    widget->setWindowTitle(QStringLiteral("Vector field visualization"));
+  // Layout
+  QPointer<QVBoxLayout> vTopLayout = new QVBoxLayout();
+  QPointer<QHBoxLayout> hXLayout = new QHBoxLayout();
+  QPointer<QHBoxLayout> hYLayout = new QHBoxLayout();
+  QPointer<QHBoxLayout> hZLayout = new QHBoxLayout();
+  QPointer<QHBoxLayout> hSegLayout = new QHBoxLayout();
 
-    // Layout
-    QPointer<QVBoxLayout> vTopLayout = new QVBoxLayout();
-    QPointer<QHBoxLayout> hXLayout = new QHBoxLayout();
-    QPointer<QHBoxLayout> hYLayout = new QHBoxLayout();
-    QPointer<QHBoxLayout> hZLayout = new QHBoxLayout();
-    QPointer<QHBoxLayout> hSegLayout = new QHBoxLayout();
+  vLayout->addLayout(vTopLayout);
+  vTopLayout->addWidget(
+      new QLabel(QStringLiteral("Przedział zmienności argumentów:")));
+  vTopLayout->addLayout(hXLayout);
+  vTopLayout->addLayout(hYLayout);
+  vTopLayout->addLayout(hZLayout);
+  vTopLayout->addWidget(new QLabel(QStringLiteral("Ilość podprzedziałów:")));
+  vTopLayout->addLayout(hSegLayout);
+  //
 
-    vLayout->addLayout(vTopLayout);
-    vTopLayout->addWidget(new QLabel(QStringLiteral("Przedział zmienności argumentów:")));
-    vTopLayout->addLayout(hXLayout);
-    vTopLayout->addLayout(hYLayout);
-    vTopLayout->addLayout(hZLayout);
-    vTopLayout->addWidget(new QLabel(QStringLiteral("Ilość podprzedziałów:")));
-    vTopLayout->addLayout(hSegLayout);
-    //
+  // Set ranges
+  QPointer<QLineEdit> xRange1 = new QLineEdit(widget);
+  xRange1->setPlaceholderText(QString("x1"));
+  xRange1->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+  xRange1->setMaximumSize(50, 200);
+  QPointer<QLineEdit> xRange2 = new QLineEdit(widget);
+  xRange2->setPlaceholderText(QString("x2"));
+  xRange2->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+  xRange2->setMaximumSize(50, 200);
 
-    // Set ranges
-    QPointer<QLineEdit> xRange1 = new QLineEdit(widget);
-    xRange1->setPlaceholderText(QString("x1"));
-    xRange1->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    xRange1->setMaximumSize(50,200);
-    QPointer<QLineEdit> xRange2 = new QLineEdit(widget);
-    xRange2->setPlaceholderText(QString("x2"));
-    xRange2->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    xRange2->setMaximumSize(50,200);
+  QPointer<QLineEdit> yRange1 = new QLineEdit(widget);
+  yRange1->setPlaceholderText(QString("y1"));
+  yRange1->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+  yRange1->setMaximumSize(50, 200);
+  QPointer<QLineEdit> yRange2 = new QLineEdit(widget);
+  yRange2->setPlaceholderText(QString("y2"));
+  yRange2->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+  yRange2->setMaximumSize(50, 200);
 
-    QPointer<QLineEdit> yRange1 = new QLineEdit(widget);
-    yRange1->setPlaceholderText(QString("y1"));
-    yRange1->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    yRange1->setMaximumSize(50,200);
-    QPointer<QLineEdit> yRange2 = new QLineEdit(widget);
-    yRange2->setPlaceholderText(QString("y2"));
-    yRange2->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    yRange2->setMaximumSize(50,200);
+  QPointer<QLineEdit> zRange1 = new QLineEdit(widget);
+  zRange1->setPlaceholderText(QString("z1"));
+  zRange1->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+  zRange1->setMaximumSize(50, 200);
+  QPointer<QLineEdit> zRange2 = new QLineEdit(widget);
+  zRange2->setPlaceholderText(QString("z2"));
+  zRange2->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+  zRange2->setMaximumSize(50, 200);
+  //
 
-    QPointer<QLineEdit> zRange1 = new QLineEdit(widget);
-    zRange1->setPlaceholderText(QString("z1"));
-    zRange1->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    zRange1->setMaximumSize(50,200);
-    QPointer<QLineEdit> zRange2 = new QLineEdit(widget);
-    zRange2->setPlaceholderText(QString("z2"));
-    zRange2->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    zRange2->setMaximumSize(50,200);
-    //
+  // Set segments
+  QPointer<QLineEdit> xSeg = new QLineEdit(widget);
+  xSeg->setPlaceholderText(QString("10"));
+  xSeg->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+  xSeg->setMaximumSize(50, 200);
+  QPointer<QLineEdit> ySeg = new QLineEdit(widget);
+  ySeg->setPlaceholderText(QString("10"));
+  ySeg->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+  ySeg->setMaximumSize(50, 200);
+  QPointer<QLineEdit> zSeg = new QLineEdit(widget);
+  zSeg->setPlaceholderText(QString("10"));
+  zSeg->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+  zSeg->setMaximumSize(50, 200);
+  //
 
-    // Set segments
-    QPointer<QLineEdit> xSeg = new QLineEdit(widget);
-    xSeg->setPlaceholderText(QString("10"));
-    xSeg->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    xSeg->setMaximumSize(50,200);
-    QPointer<QLineEdit> ySeg = new QLineEdit(widget);
-    ySeg->setPlaceholderText(QString("10"));
-    ySeg->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    ySeg->setMaximumSize(50,200);
-    QPointer<QLineEdit> zSeg = new QLineEdit(widget);
-    zSeg->setPlaceholderText(QString("10"));
-    zSeg->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    zSeg->setMaximumSize(50,200);
-    //
+  // Set slider
+  QPointer<QSlider> arrowsLengthSlider = new QSlider(Qt::Horizontal, widget);
+  arrowsLengthSlider->setTickInterval(1);
+  arrowsLengthSlider->setMinimum(1);
+  arrowsLengthSlider->setValue(50);
+  arrowsLengthSlider->setMaximum(100);
+  vTopLayout->addWidget(new QLabel(QStringLiteral("Długość wektora:")));
+  vTopLayout->addWidget(arrowsLengthSlider);
+  //
 
-    // Bottom layout
-    hSegLayout->addWidget(xSeg);
-    hSegLayout->addWidget(ySeg);
-    hSegLayout->addWidget(zSeg);
+  // Function combobox
+  int funCounter = 0;
+  QPointer<QComboBox> functionComboBox = new QComboBox();
+  functionComboBox->addItem("Function " + QString::number(++funCounter));
+  functionComboBox->addItem("Function " + QString::number(++funCounter));
+  functionComboBox->addItem("Function " + QString::number(++funCounter));
+  functionComboBox->addItem("Function " + QString::number(++funCounter));
+  vTopLayout->addWidget(functionComboBox);
+  //
 
-    hXLayout->addWidget(xRange1);
-    hXLayout->addWidget(xRange2);
+  // Bottom layout
+  hSegLayout->addWidget(xSeg);
+  hSegLayout->addWidget(ySeg);
+  hSegLayout->addWidget(zSeg);
 
-    hYLayout->addWidget(yRange1);
-    hYLayout->addWidget(yRange2);
+  hXLayout->addWidget(xRange1);
+  hXLayout->addWidget(xRange2);
 
-    hZLayout->addWidget(zRange1);
-    hZLayout->addWidget(zRange2);
-    //
+  hYLayout->addWidget(yRange1);
+  hYLayout->addWidget(yRange2);
 
-    QPointer<Scatter> modifier = new Scatter(graph);
+  hZLayout->addWidget(zRange1);
+  hZLayout->addWidget(zRange2);
+  //
 
-    QObject::connect(xRange1, SIGNAL(textChanged(QString)), modifier, SLOT(setXFirst(QString)));
-    QObject::connect(xRange2, SIGNAL(textChanged(QString)), modifier, SLOT(setXSecond(QString)));
-    QObject::connect(yRange1, SIGNAL(textChanged(QString)), modifier, SLOT(setYFirst(QString)));
-    QObject::connect(yRange2, SIGNAL(textChanged(QString)), modifier, SLOT(setYSecond(QString)));
-    QObject::connect(zRange1, SIGNAL(textChanged(QString)), modifier, SLOT(setZFirst(QString)));
-    QObject::connect(zRange2, SIGNAL(textChanged(QString)), modifier, SLOT(setZSecond(QString)));
+  QPointer<Scatter> modifier = new Scatter(graph);
 
-    QObject::connect(xSeg, SIGNAL(textChanged(QString)), modifier, SLOT(setXRange(QString)));
-    QObject::connect(ySeg, SIGNAL(textChanged(QString)), modifier, SLOT(setYRange(QString)));
-    QObject::connect(zSeg, SIGNAL(textChanged(QString)), modifier, SLOT(setZRange(QString)));
+  QObject::connect(xRange1, SIGNAL(textChanged(QString)), modifier,
+                   SLOT(setXFirst(QString)));
+  QObject::connect(xRange2, SIGNAL(textChanged(QString)), modifier,
+                   SLOT(setXSecond(QString)));
+  QObject::connect(yRange1, SIGNAL(textChanged(QString)), modifier,
+                   SLOT(setYFirst(QString)));
+  QObject::connect(yRange2, SIGNAL(textChanged(QString)), modifier,
+                   SLOT(setYSecond(QString)));
+  QObject::connect(zRange1, SIGNAL(textChanged(QString)), modifier,
+                   SLOT(setZFirst(QString)));
+  QObject::connect(zRange2, SIGNAL(textChanged(QString)), modifier,
+                   SLOT(setZSecond(QString)));
 
-    widget->show();
-    return app.exec();
+  QObject::connect(xSeg, SIGNAL(textChanged(QString)), modifier,
+                   SLOT(setXRange(QString)));
+  QObject::connect(ySeg, SIGNAL(textChanged(QString)), modifier,
+                   SLOT(setYRange(QString)));
+  QObject::connect(zSeg, SIGNAL(textChanged(QString)), modifier,
+                   SLOT(setZRange(QString)));
+
+  QObject::connect(arrowsLengthSlider, &QSlider::valueChanged, modifier,
+                   &Scatter::setArrowsLength);
+
+  QObject::connect(functionComboBox, SIGNAL(currentIndexChanged(int)), modifier,
+                   SLOT(comboboxItemChanged(int)));
+
+  widget->show();
+  return app.exec();
 }

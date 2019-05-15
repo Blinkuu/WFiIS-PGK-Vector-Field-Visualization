@@ -27,11 +27,18 @@ public Q_SLOTS:
     void setYRange(const QString& x);
     void setZRange(const QString& x);
 
+    void setArrowsLength(int arrowLength);
+    void comboboxItemChanged(int index);
+
 private:
     Q3DScatter *m_graph;
 
 private:
+    std::function<QVector3D(const QVector3D&&)> m_function;
+
     QPair<float, float> m_xRange;
     QPair<float, float> m_yRange;
     QPair<float, float> m_zRange;
+
+    int m_arrowLength;
 };

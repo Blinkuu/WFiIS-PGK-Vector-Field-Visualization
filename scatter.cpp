@@ -7,9 +7,9 @@
 #include <QtDataVisualization/qscatter3dseries.h>
 #include <QtDataVisualization/qscatterdataproxy.h>
 #include <QtDataVisualization/qvalue3daxis.h>
-#include <iostream>
-
 #include <Qt3DCore/QTransform>
+
+#include <iostream>
 
 using namespace QtDataVisualization;
 
@@ -20,9 +20,11 @@ constexpr float radiansToDegrees = 360.0f / doublePi;
 
 Scatter::Scatter(Q3DScatter *scatter)
  : m_graph(scatter),
+   m_function([](const QVector3D&& vec){ return QVector3D(vec.x(), vec.y(), vec.z()); }),
    m_xRange(-horizontalRange, horizontalRange),
    m_yRange(-verticalRange, verticalRange),
-   m_zRange(-horizontalRange, horizontalRange) {
+   m_zRange(-horizontalRange, horizontalRange),
+   m_arrowLength(50) {
 
   m_graph->setShadowQuality(QAbstract3DGraph::ShadowQualityNone);
   m_graph->scene()->activeCamera()->setCameraPreset(Q3DCamera::CameraPresetFront);
@@ -65,22 +67,14 @@ void Scatter::generateData() {
     }
   }
 
-  auto fun1 = [](const QVector3D &&vec) {
-    return QVector3D{vec.x(), vec.y(), vec.z()};
-  };
-
-  [[maybe_unused]] auto fun2 = [](const QVector3D &&vec) {
-    return QVector3D{vec.y() * vec.z(), vec.x() * vec.z(), vec.x() * vec.y()};
-  };
-
   int i = 0;
   for (float xr = m_xRange.first; xr <= m_xRange.second; xr += (m_xRange.second - m_xRange.first) / axisX->segmentCount()) {
     for (float yr = m_yRange.first; yr <= m_yRange.second; yr += (m_yRange.second - m_yRange.first) / axisY->segmentCount()) {
       for (float zr = m_zRange.first; zr <= m_zRange.second; zr += (m_zRange.second - m_zRange.first) / axisZ->segmentCount()) {
 
-        auto vec = fun1(QVector3D(xr, yr, zr));
+        auto vec = m_function(QVector3D(xr, yr, zr));
         auto item = new QCustom3DItem();
-        item->setScaling(QVector3D(0.05f, 0.05, 0.05f));
+        item->setScaling(QVector3D(0.05f, m_arrowLength/1000.0f, 0.05f));
         item->setMeshFile(QStringLiteral(":/arrow.obj"));
         auto out = static_cast<unsigned char>(abs((lengths[i] - min) * 255 / (max - min)));
         QImage sunColor = QImage(2, 2, QImage::Format_RGB32);
@@ -113,8 +107,7 @@ void Scatter::generateData() {
 void Scatter::setXFirst(const QString &x) {
   QValue3DAxis *axis = m_graph->axisX();
 
-  !x.isEmpty() && x.toFloat() < 0.0f ? m_xRange.first = x.toFloat()
-                                     : m_xRange.first = -10.0f;
+  x.toFloat() > m_xRange.second ? m_xRange.first = -horizontalRange : m_xRange.first = x.toFloat();
 
   axis->setRange(m_xRange.first, m_xRange.second);
   generateData();
@@ -123,8 +116,7 @@ void Scatter::setXFirst(const QString &x) {
 void Scatter::setXSecond(const QString &x) {
   QValue3DAxis *axis = m_graph->axisX();
 
-  !x.isEmpty() && x.toFloat() > 0.0f ? m_xRange.second = x.toFloat()
-                                     : m_xRange.second = 10.0f;
+  x.toFloat() < m_xRange.first ? m_xRange.second = horizontalRange : m_xRange.second = x.toFloat();
 
   axis->setRange(m_xRange.first, m_xRange.second);
   generateData();
@@ -133,8 +125,7 @@ void Scatter::setXSecond(const QString &x) {
 void Scatter::setYFirst(const QString &y) {
   QValue3DAxis *axis = m_graph->axisY();
 
-  !y.isEmpty() && y.toFloat() < 0.0f ? m_yRange.first = y.toFloat()
-                                     : m_yRange.first = -10.0f;
+  y.toFloat() > m_yRange.second ? m_yRange.first = -horizontalRange : m_yRange.first = y.toFloat();
 
   axis->setRange(m_yRange.first, m_yRange.second);
   generateData();
@@ -143,8 +134,7 @@ void Scatter::setYFirst(const QString &y) {
 void Scatter::setYSecond(const QString &y) {
   QValue3DAxis *axis = m_graph->axisY();
 
-  !y.isEmpty() && y.toFloat() > 0.0f ? m_yRange.second = y.toFloat()
-                                     : m_yRange.second = 10.0f;
+  y.toFloat() < m_yRange.first ? m_yRange.second = horizontalRange : m_yRange.second = y.toFloat();
 
   axis->setRange(m_yRange.first, m_yRange.second);
   generateData();
@@ -152,8 +142,7 @@ void Scatter::setYSecond(const QString &y) {
 void Scatter::setZFirst(const QString &z) {
   QValue3DAxis *axis = m_graph->axisZ();
 
-  !z.isEmpty() && z.toFloat() < 0.0f ? m_zRange.first = z.toFloat()
-                                     : m_zRange.first = -10.0f;
+  z.toFloat() > m_zRange.second ? m_zRange.first = -horizontalRange : m_zRange.first = z.toFloat();
 
   axis->setRange(m_zRange.first, m_zRange.second);
   generateData();
@@ -162,8 +151,7 @@ void Scatter::setZFirst(const QString &z) {
 void Scatter::setZSecond(const QString &z) {
   QValue3DAxis *axis = m_graph->axisZ();
 
-  !z.isEmpty() && z.toFloat() > 0.0f ? m_zRange.second = z.toFloat()
-                                     : m_zRange.second = 10.0f;
+  z.toFloat() < m_zRange.first ? m_zRange.second = horizontalRange : m_zRange.second = z.toFloat();
 
   axis->setRange(m_zRange.first, m_zRange.second);
   generateData();
@@ -194,4 +182,19 @@ void Scatter::setZRange(const QString &x) {
       ? axis->setSegmentCount(x.toInt())
       : axis->setSegmentCount(static_cast<int>(horizontalRange));
   generateData();
+}
+
+void Scatter::setArrowsLength(int arrowLength) {
+    m_arrowLength = arrowLength;
+    generateData();
+}
+
+void Scatter::comboboxItemChanged(int index) {
+    if(index == 0)
+        m_function = [](const QVector3D&& vec){ return QVector3D(vec.x(), vec.y(), vec.z()); };
+    else if(index == 1)
+        m_function = [](const QVector3D&& vec){ return QVector3D{vec.y() * vec.z(), vec.x() * vec.z(), vec.x() * vec.y()}; };
+    else
+        m_function = [](const QVector3D&& vec){ return QVector3D(vec.x(), vec.y(), vec.z()); };
+    generateData();
 }
