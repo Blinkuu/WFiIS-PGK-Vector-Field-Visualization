@@ -29,22 +29,9 @@ public Q_SLOTS:
 
 private:
     Q3DScatter *m_graph;
-    QTimer m_rotationTimer;
-    int m_fieldLines;
-    int m_arrowsPerLine;
-    QScatter3DSeries *m_magneticField;
-    QCustom3DItem *m_sun;
-    QCustom3DItem *m_vec;
-    QScatterDataArray *m_magneticFieldArray;
-    float m_angleOffset;
-    float m_angleStep;
 
 private:
     QPair<float, float> m_xRange;
     QPair<float, float> m_yRange;
     QPair<float, float> m_zRange;
-
-    int m_xSegments;
-    int m_ySegments;
-    int m_zSegments;
 };

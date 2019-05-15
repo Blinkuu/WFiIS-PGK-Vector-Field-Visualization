@@ -13,46 +13,21 @@
 
 using namespace QtDataVisualization;
 
-static constexpr float verticalRange = 10.0f;
-static constexpr float horizontalRange = verticalRange;
-static constexpr float doublePi = static_cast<float>(M_PI) * 2.0f;
-static constexpr float animationFrames = 30.0f;
-static constexpr float radiansToDegrees = 360.0f / doublePi;
+constexpr float verticalRange = 10.0f;
+constexpr float horizontalRange = verticalRange;
+constexpr float doublePi = static_cast<float>(M_PI) * 2.0f;
+constexpr float radiansToDegrees = 360.0f / doublePi;
 
 Scatter::Scatter(Q3DScatter *scatter)
-    : m_graph(scatter), m_fieldLines(12), m_arrowsPerLine(16),
-      m_magneticField(new QScatter3DSeries), m_sun(new QCustom3DItem),
-      m_vec(new QCustom3DItem), m_magneticFieldArray(nullptr),
-      m_angleOffset(0.0f),
-      m_angleStep(doublePi / m_arrowsPerLine / animationFrames),
-      m_xRange(-horizontalRange, horizontalRange),
-      m_yRange(-verticalRange, verticalRange),
-      m_zRange(-horizontalRange, horizontalRange),
-      m_xSegments(static_cast<int>(horizontalRange)),
-      m_ySegments(static_cast<int>(verticalRange)),
-      m_zSegments(static_cast<int>(horizontalRange)) {
+ : m_graph(scatter),
+   m_xRange(-horizontalRange, horizontalRange),
+   m_yRange(-verticalRange, verticalRange),
+   m_zRange(-horizontalRange, horizontalRange) {
+
   m_graph->setShadowQuality(QAbstract3DGraph::ShadowQualityNone);
-  m_graph->scene()->activeCamera()->setCameraPreset(
-      Q3DCamera::CameraPresetFront);
-
-  // Magnetic field lines use custom narrow arrow
-  m_magneticField->setItemSize(0.2f);
-  //! [3]
-  m_magneticField->setMesh(QAbstract3DSeries::MeshUserDefined);
-  m_magneticField->setUserDefinedMesh(QStringLiteral(":/arrow.obj"));
-  //! [3]
-  //! [4]
-  QLinearGradient fieldGradient(0, 0, 16, 1024);
-  fieldGradient.setColorAt(0.0, Qt::yellow);
-  fieldGradient.setColorAt(1.0, Qt::red);
-  m_magneticField->setBaseGradient(fieldGradient);
-  m_magneticField->setColorStyle(Q3DTheme::ColorStyleRangeGradient);
-  //! [4]
-
+  m_graph->scene()->activeCamera()->setCameraPreset(Q3DCamera::CameraPresetFront);
   m_graph->customItems().clear();
   m_graph->activeTheme()->setType(Q3DTheme::ThemeEbony);
-
-  // Configure the axes according to the data
   m_graph->axisX()->setRange(m_xRange.first, m_xRange.second);
   m_graph->axisY()->setRange(m_yRange.first, m_yRange.second);
   m_graph->axisZ()->setRange(m_zRange.first, m_zRange.second);
@@ -69,7 +44,6 @@ void Scatter::generateData() {
 
   QImage sunColor = QImage(2, 2, QImage::Format_RGB32);
   sunColor.fill(QColor(0xff, 0xbb, 0x00));
-  //    m_sun->setTextureImage(sunColor);
 
   float min = 0.;
   float max = 0.;
@@ -77,12 +51,9 @@ void Scatter::generateData() {
   QValue3DAxis *axisX = m_graph->axisX();
   QValue3DAxis *axisY = m_graph->axisY();
   QValue3DAxis *axisZ = m_graph->axisZ();
-  for (float xr = m_xRange.first; xr <= m_xRange.second;
-       xr += (m_xRange.second - m_xRange.first) / axisX->segmentCount()) {
-    for (float yr = m_yRange.first; yr <= m_yRange.second;
-         yr += (m_yRange.second - m_yRange.first) / axisY->segmentCount()) {
-      for (float zr = m_zRange.first; zr <= m_zRange.second;
-           zr += (m_zRange.second - m_zRange.first) / axisZ->segmentCount()) {
+  for (float xr = m_xRange.first; xr <= m_xRange.second; xr += (m_xRange.second - m_xRange.first) / axisX->segmentCount()) {
+    for (float yr = m_yRange.first; yr <= m_yRange.second; yr += (m_yRange.second - m_yRange.first) / axisY->segmentCount()) {
+      for (float zr = m_zRange.first; zr <= m_zRange.second; zr += (m_zRange.second - m_zRange.first) / axisZ->segmentCount()) {
         auto vec = QVector3D(xr, yr, zr);
         lengths.push_back(vec.lengthSquared());
         if (vec.lengthSquared() > max) {
@@ -98,40 +69,33 @@ void Scatter::generateData() {
     return QVector3D{vec.x(), vec.y(), vec.z()};
   };
 
-  auto fun2 = [](const QVector3D &&vec) {
+  [[maybe_unused]] auto fun2 = [](const QVector3D &&vec) {
     return QVector3D{vec.y() * vec.z(), vec.x() * vec.z(), vec.x() * vec.y()};
   };
 
   int i = 0;
-  for (float xr = m_xRange.first; xr <= m_xRange.second;
-       xr += (m_xRange.second - m_xRange.first) / axisX->segmentCount()) {
-    for (float yr = m_yRange.first; yr <= m_yRange.second;
-         yr += (m_yRange.second - m_yRange.first) / axisY->segmentCount()) {
-      for (float zr = m_zRange.first; zr <= m_zRange.second;
-           zr += (m_zRange.second - m_zRange.first) / axisZ->segmentCount()) {
+  for (float xr = m_xRange.first; xr <= m_xRange.second; xr += (m_xRange.second - m_xRange.first) / axisX->segmentCount()) {
+    for (float yr = m_yRange.first; yr <= m_yRange.second; yr += (m_yRange.second - m_yRange.first) / axisY->segmentCount()) {
+      for (float zr = m_zRange.first; zr <= m_zRange.second; zr += (m_zRange.second - m_zRange.first) / axisZ->segmentCount()) {
 
         auto vec = fun1(QVector3D(xr, yr, zr));
         auto item = new QCustom3DItem();
-        auto end = QVector3D(xr, yr, zr) + vec;
         item->setScaling(QVector3D(0.05f, 0.05, 0.05f));
         item->setMeshFile(QStringLiteral(":/arrow.obj"));
-        auto out = static_cast<unsigned char>(
-            fabs((lengths[i] - min) * 255 / (max - min)));
+        auto out = static_cast<unsigned char>(abs((lengths[i] - min) * 255 / (max - min)));
         QImage sunColor = QImage(2, 2, QImage::Format_RGB32);
-        sunColor.fill(
-            QColor(static_cast<int>(out), 0, static_cast<int>(255 - out)));
+        sunColor.fill(QColor(static_cast<int>(out), 0, static_cast<int>(255 - out)));
         item->setTextureImage(sunColor);
         i++;
 
-        Qt3DCore::QTransform rotateTransform;
-        auto up = QVector3D(0, 1, 0);
-
         // rotation
-        auto angle = qAcos(QVector3D::dotProduct(up, vec) / vec.length());
+        auto up = QVector3D(0, 1, 0);
+        auto angle = qAcos(static_cast<double>(QVector3D::dotProduct(up, vec) / vec.length()));
         auto axis = QVector3D::crossProduct(up, vec);
-        auto rot = QQuaternion::fromAxisAndAngle(axis, angle * radiansToDegrees);
+        auto rot = QQuaternion::fromAxisAndAngle(axis, angle * static_cast<double>(radiansToDegrees));
         auto roty = QQuaternion::fromAxisAndAngle(0.0f, 1.0f, 0.0f, (xr >= 0.0f && zr >= 0.0f) || (xr <= 0.0f && zr <= 0.0f) ? 90.0f : -90.0f);
-        if (xr == 0.0f) { roty = QQuaternion::fromAxisAndAngle(0.0f, 1.0f, 0.0f, 180.0f);
+        if (xr == 0.0f) {
+          roty = QQuaternion::fromAxisAndAngle(0.0f, 1.0f, 0.0f, 180.0f);
           item->setRotation(roty * rot);
         }else if (zr == 0.0f) {
           item->setRotation(rot);
