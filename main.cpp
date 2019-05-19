@@ -102,6 +102,11 @@ int main(int argc, char *argv[]) {
   zSeg->setMaximumSize(50, 200);
   //
 
+  //vec length option
+  QPointer<QComboBox> lengthOptions = new QComboBox();
+  lengthOptions->addItem("Automatycznie");
+  lengthOptions->addItem("Stała");
+  lengthOptions->addItem("Podana przez użytkownika");
   // Set slider
   QPointer<QSlider> arrowsLengthSlider = new QSlider(Qt::Horizontal, widget);
   arrowsLengthSlider->setTickInterval(1);
@@ -109,6 +114,7 @@ int main(int argc, char *argv[]) {
   arrowsLengthSlider->setValue(50);
   arrowsLengthSlider->setMaximum(100);
   vLayout->addWidget(new QLabel(QStringLiteral("Długość wektora:")));
+  vLayout->addWidget(lengthOptions);
   vLayout->addWidget(arrowsLengthSlider);
   //
 
@@ -199,6 +205,8 @@ int main(int argc, char *argv[]) {
 
   QObject::connect(functionComboBox, SIGNAL(currentIndexChanged(int)), modifier,
                    SLOT(functionboxItemChanged(int)));
+  QObject::connect(lengthOptions, SIGNAL(currentIndexChanged(int)), modifier,
+                   SLOT(lengthboxItemChanged(int)));
 
   QObject::connect(themeComboBox, SIGNAL(currentIndexChanged(int)), modifier,
                    SLOT(themeboxItemChanged(int)));
