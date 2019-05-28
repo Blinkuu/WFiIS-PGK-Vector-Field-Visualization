@@ -3,6 +3,7 @@
 #include <QtGui/QScreen>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
@@ -27,16 +28,17 @@ int main(int argc, char *argv[]) {
   }
 
   QSize screenSize = graph->screen()->size();
-  container->setMinimumSize(
-      QSize(screenSize.width() / 8, screenSize.height() / 6));
+  container->setMinimumSize(QSize(800, 600));
   container->setMaximumSize(screenSize);
   container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   container->setFocusPolicy(Qt::StrongFocus);
 
   // Main frame and layout
   QPointer<QWidget> widget = new QWidget;
+
   QPointer<QHBoxLayout> hLayout = new QHBoxLayout(widget);
   QPointer<QVBoxLayout> vLayout = new QVBoxLayout();
+
   hLayout->addWidget(container, 1);
   hLayout->addLayout(vLayout);
 
@@ -48,6 +50,7 @@ int main(int argc, char *argv[]) {
   QPointer<QHBoxLayout> hZLayout = new QHBoxLayout();
   QPointer<QHBoxLayout> hSegLayout = new QHBoxLayout();
   QPointer<QHBoxLayout> hParLayout = new QHBoxLayout();
+  QPointer<QHBoxLayout> hPlainLayout = new QHBoxLayout();
 
   //vLayout->addLayout(vTopLayout);
   vLayout->addWidget(new QLabel(QStringLiteral("Przedział zmienności argumentów:")));
@@ -156,6 +159,32 @@ int main(int argc, char *argv[]) {
   vLayout->addWidget(themeComboBox);
   //
 
+  // Inputs of plain, which vector shall be limited by
+  QPointer<QCheckBox> plainLimiterCheckBox = new QCheckBox;
+  plainLimiterCheckBox->setText("Włącz odcięcie płaszczyzną");
+  vLayout->addWidget(plainLimiterCheckBox);
+
+  QPointer<QLineEdit> xMax = new QLineEdit(widget);
+  xMax->setPlaceholderText(QString("1"));
+  xMax->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+  xMax->setMaximumSize(50, 200);
+  QPointer<QLineEdit> yMax = new QLineEdit(widget);
+  yMax->setPlaceholderText(QString("1"));
+  yMax->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+  yMax->setMaximumSize(50, 200);
+  QPointer<QLineEdit> zMax = new QLineEdit(widget);
+  zMax->setPlaceholderText(QString("1"));
+  zMax->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+  zMax->setMaximumSize(50, 200);
+
+  hPlainLayout->addWidget(new QLabel(QStringLiteral(" xMax    =")));
+  hPlainLayout->addWidget(xMax);
+  hPlainLayout->addWidget(new QLabel(QStringLiteral(" yMax    =")));
+  hPlainLayout->addWidget(yMax);
+  hPlainLayout->addWidget(new QLabel(QStringLiteral(" zMax    =")));
+  hPlainLayout->addWidget(zMax);
+  vLayout->addLayout(hPlainLayout);
+
   // Bottom layout
   hSegLayout->addWidget(xSeg);
   hSegLayout->addWidget(ySeg);
@@ -210,6 +239,15 @@ int main(int argc, char *argv[]) {
 
   QObject::connect(themeComboBox, SIGNAL(currentIndexChanged(int)), modifier,
                    SLOT(themeboxItemChanged(int)));
+
+  QObject::connect(plainLimiterCheckBox, SIGNAL(clicked(bool)), modifier,
+                   SLOT(setCutByPlain(bool)));
+  QObject::connect(xMax, SIGNAL(textChanged(QString)), modifier,
+                   SLOT(setMaxX(QString)));
+  QObject::connect(yMax, SIGNAL(textChanged(QString)), modifier,
+                   SLOT(setMaxY(QString)));
+  QObject::connect(zMax, SIGNAL(textChanged(QString)), modifier,
+                   SLOT(setMaxZ(QString)));
 
   widget->show();
   return app.exec();

@@ -35,6 +35,11 @@ public Q_SLOTS:
     void lengthboxItemChanged(int index);
     void themeboxItemChanged(int index);
 
+    void setCutByPlain(bool checked);
+    void setMaxX(const QString& x);
+    void setMaxY(const QString& y);
+    void setMaxZ(const QString& z);
+
 private:
     Q3DScatter *m_graph;
 
@@ -47,7 +52,13 @@ private:
     float m_a = 1.0f;
     float m_b = 1.0f;
     float m_c = 1.0f;
+    float m_xMax = 1.0f;
+    float m_yMax = 1.0f;
+    float m_zMax = 1.0f;
+
     int m_lenghtOption = 0;
+
+    bool m_cutByPlain = false;
 
     int m_arrowLength;
 };

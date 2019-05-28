@@ -44,9 +44,11 @@ Scatter::Scatter(Q3DScatter *scatter)
   m_graph->scene()->activeCamera()->setCameraPreset(Q3DCamera::CameraPresetFront);
   m_graph->customItems().clear();
   m_graph->activeTheme()->setType(Q3DTheme::ThemeQt);
+
   m_graph->axisX()->setRange(m_xRange.first, m_xRange.second);
   m_graph->axisY()->setRange(m_yRange.first, m_yRange.second);
   m_graph->axisZ()->setRange(m_zRange.first, m_zRange.second);
+
   m_graph->axisX()->setSegmentCount(static_cast<int>(horizontalRange));
   m_graph->axisZ()->setSegmentCount(static_cast<int>(horizontalRange));
 
@@ -66,15 +68,22 @@ void Scatter::generateData() {
   QImage sunColor = QImage(2, 2, QImage::Format_RGB32);
   sunColor.fill(QColor(0xff, 0xbb, 0x00));
 
-  float min = 0.;
+  float min = 10000.;
   float max = 0.;
+
   std::vector<float> lengths;
+
   QValue3DAxis *axisX = m_graph->axisX();
   QValue3DAxis *axisY = m_graph->axisY();
   QValue3DAxis *axisZ = m_graph->axisZ();
-  for (float xr = m_xRange.first; xr <= m_xRange.second; xr += (m_xRange.second - m_xRange.first) / axisX->segmentCount()) {
-    for (float yr = m_yRange.first; yr <= m_yRange.second; yr += (m_yRange.second - m_yRange.first) / axisY->segmentCount()) {
-      for (float zr = m_zRange.first; zr <= m_zRange.second; zr += (m_zRange.second - m_zRange.first) / axisZ->segmentCount()) {
+
+  float maximumX = m_cutByPlain ? m_xMax : m_xRange.second;
+  float maximumY = m_cutByPlain ? m_yMax : m_yRange.second;
+  float maximumZ = m_cutByPlain ? m_zMax : m_zRange.second;
+
+  for (float xr = m_xRange.first; xr <= maximumX; xr += (maximumX - m_xRange.first) / axisX->segmentCount()) {
+    for (float yr = m_yRange.first; yr <= maximumY; yr += (maximumY- m_yRange.first) / axisY->segmentCount()) {
+      for (float zr = m_zRange.first; zr <= maximumZ; zr += (maximumZ - m_zRange.first) / axisZ->segmentCount()) {
         auto vec = m_function(QVector3D(xr, yr, zr), m_a, m_b, m_c);
         lengths.push_back(vec.lengthSquared());
         if (vec.lengthSquared() > max) {
@@ -86,13 +95,15 @@ void Scatter::generateData() {
     }
   }
 
-  float stepx = (m_xRange.second - m_xRange.first) / axisX->segmentCount();
-  float stepy = (m_yRange.second - m_yRange.first) / axisY->segmentCount();
-  float stepz = (m_zRange.second - m_zRange.first) / axisZ->segmentCount();
+  float stepx = (maximumX - m_xRange.first) / axisX->segmentCount();
+  float stepy = (maximumY - m_yRange.first) / axisY->segmentCount();
+  float stepz = (maximumZ- m_zRange.first) / axisZ->segmentCount();
+
   int i = 0;
-  for (float xr = m_xRange.first; xr <= m_xRange.second; xr += stepx) {
-    for (float yr = m_yRange.first; yr <= m_yRange.second; yr += stepy) {
-      for (float zr = m_zRange.first; zr <= m_zRange.second; zr += stepz) {
+
+  for (float xr = m_xRange.first; xr <= maximumX; xr += stepx) {
+    for (float yr = m_yRange.first; yr <= maximumY; yr += stepy) {
+      for (float zr = m_zRange.first; zr <= maximumZ; zr += stepz) {
 
         auto vec = m_function(QVector3D(xr, yr, zr), m_a, m_b, m_c);
         auto item = new QCustom3DItem();
@@ -255,5 +266,25 @@ void Scatter::setC(const QString& c){
 
 void Scatter::lengthboxItemChanged(int index){
     m_lenghtOption = index;
+    generateData();
+}
+
+void Scatter::setCutByPlain(bool checked) {
+    m_cutByPlain = checked;
+    generateData();
+}
+
+void Scatter::setMaxX(const QString& x){
+    m_xMax = x.toFloat();
+    generateData();
+}
+
+void Scatter::setMaxY(const QString& y){
+    m_yMax = y.toFloat();
+    generateData();
+}
+
+void Scatter::setMaxZ(const QString& z){
+    m_zMax = z.toFloat();
     generateData();
 }
