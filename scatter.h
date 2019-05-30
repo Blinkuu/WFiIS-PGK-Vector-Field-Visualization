@@ -27,8 +27,8 @@ public Q_SLOTS:
     void setC(const QString& c);
 
     void setXRange(const QString& x);
-    void setYRange(const QString& x);
-    void setZRange(const QString& x);
+    void setYRange(const QString& y);
+    void setZRange(const QString& z);
 
     void setArrowsLength(int arrowLength);
     void functionboxItemChanged(int index);
@@ -36,14 +36,17 @@ public Q_SLOTS:
     void themeboxItemChanged(int index);
 
     void setCutByPlain(bool checked);
-    void setMaxX(const QString& x);
-    void setMaxY(const QString& y);
-    void setMaxZ(const QString& z);
+    void setPlainA(const QString& A);
+    void setPlainB(const QString& B);
+    void setPlainC(const QString& C);
+    void setPlainD(const QString& D);
 
 private:
     Q3DScatter *m_graph;
 
 private:
+    bool isAbovePlain(float x, float y, float z);
+
     std::function<QVector3D(const QVector3D&&, float, float, float)> m_function;
 
     QPair<float, float> m_xRange;
@@ -52,9 +55,10 @@ private:
     float m_a = 1.0f;
     float m_b = 1.0f;
     float m_c = 1.0f;
-    float m_xMax = 1.0f;
-    float m_yMax = 1.0f;
-    float m_zMax = 1.0f;
+    float m_plainA = 1.0f;
+    float m_plainB = 1.0f;
+    float m_plainC = 1.0f;
+    float m_plainD = 1.0f;
 
     int m_lenghtOption = 0;
 
