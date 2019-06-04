@@ -8,6 +8,9 @@
 #include <QtDataVisualization/qscatterdataproxy.h>
 #include <QtDataVisualization/qvalue3daxis.h>
 #include <Qt3DCore/QTransform>
+#include <QPixmap>
+#include <QFileDialog>
+#include <QMessageBox>
 
 #include <iostream>
 
@@ -30,7 +33,6 @@ float minimum(float a, float b, float c) {
         return c;
     }
 }
-
 
 Scatter::Scatter(Q3DScatter *scatter)
         : m_graph(scatter),
@@ -312,4 +314,19 @@ void Scatter::setPlainD(const QString &D) {
 
 bool Scatter::isAbovePlain(float x, float y, float z) {
     return ((-m_plainD - (m_plainA * x) - (m_plainB * y)) / m_plainC) < z;
+}
+
+void Scatter::handleButton() {
+    QWidget w;
+    QString fileName = QFileDialog::getSaveFileName(&w,
+           tr("Save graph"), "",
+           tr("PNG (*.png);;All Files (*)"));
+
+    if(fileName.isEmpty()) {
+        QMessageBox::information(&w, tr("Unable to save file"), "No file name specified!");
+        return;
+    }
+    QPixmap pixmap;
+    pixmap.convertFromImage(m_graph->renderToImage());
+    pixmap.save(fileName, "png");
 }
