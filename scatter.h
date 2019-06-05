@@ -41,6 +41,7 @@ public Q_SLOTS:
     void setPlainC(const QString& C);
     void setPlainD(const QString& D);
 
+    void handleButton();
 private:
     Q3DScatter *m_graph;
 

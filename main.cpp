@@ -191,6 +191,10 @@ int main(int argc, char *argv[]) {
     hPlainLayout->addWidget(plainD);
     vLayout->addLayout(hPlainLayout);
 
+    // Save to file
+    QPointer <QPushButton> saveButton = new QPushButton("Zapisz", widget);
+    vLayout->addWidget(saveButton);
+
     // Bottom layout
     hSegLayout->addWidget(xSeg);
     hSegLayout->addWidget(ySeg);
@@ -257,6 +261,7 @@ int main(int argc, char *argv[]) {
     QObject::connect(plainD, SIGNAL(textChanged(QString)), modifier,
                      SLOT(setPlainD(QString)));
 
+    QObject::connect(saveButton, SIGNAL (released()), modifier, SLOT (handleButton()));
     widget->show();
     return app.exec();
 }
