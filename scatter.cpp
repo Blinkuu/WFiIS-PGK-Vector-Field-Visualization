@@ -63,9 +63,9 @@ Scatter::~Scatter() {
 }
 
 void Scatter::generateData() {
-
     m_graph->removeCustomItems();
     m_graph->clearSelection();
+
 
     QImage sunColor = QImage(2, 2, QImage::Format_RGB32);
     sunColor.fill(QColor(0xff, 0xbb, 0x00));
@@ -99,58 +99,61 @@ void Scatter::generateData() {
         }
     }
 
+
     float stepx = (m_xRange.second - m_xRange.first) / axisX->segmentCount();
     float stepy = (m_yRange.second - m_yRange.first) / axisY->segmentCount();
     float stepz = (m_zRange.second - m_zRange.first) / axisZ->segmentCount();
 
-    int i = 0;
 
-    for (float xr = m_xRange.first; xr <= m_xRange.second; xr += stepx) {
-        for (float yr = m_yRange.first; yr <= m_yRange.second; yr += stepy) {
-            for (float zr = m_zRange.first; zr <= m_zRange.second; zr += stepz) {
-                if (m_cutByPlain && isAbovePlain(xr, yr, zr)) {
-                    continue;
+    for (int h = 0; h < 3; h++) {
+        int i = 0;
+        for (float xr = m_xRange.first; xr <= m_xRange.second; xr += stepx) {
+            for (float yr = m_yRange.first; yr <= m_yRange.second; yr += stepy) {
+                for (float zr = m_zRange.first; zr <= m_zRange.second; zr += stepz) {
+                    if (m_cutByPlain && isAbovePlain(xr, yr, zr)) {
+                        continue;
+                    }
+                    auto vec = m_function(QVector3D(xr, yr, zr), m_a, m_b, m_c);
+                    auto item = new QCustom3DItem();
+                    if (m_lenghtOption == 0) {
+                        item->setScaling(
+                                QVector3D(0.05f, vec.lengthSquared() / max * minimum(stepx, stepy, stepz) / 10, 0.05f));
+                    } else if (m_lenghtOption == 1) {
+                        item->setScaling(QVector3D(0.07f, 0.12f, 0.07f));
+                    } else {
+                        item->setScaling(QVector3D(0.05f, m_arrowLength / 300.0f * vec.lengthSquared() / max, 0.05f));
+                    }
+
+                    item->setMeshFile(QStringLiteral(":/arrow.obj"));
+                    auto out = static_cast<unsigned char>(abs((lengths[i] - min) * 255 / (max - min)));
+                    QImage sunColor = QImage(2, 2, QImage::Format_RGB32);
+                    sunColor.fill(QColor(static_cast<int>(out), 0, static_cast<int>(255 - out)));
+                    item->setTextureImage(sunColor);
+                    i++;
+
+                    // rotation
+                    auto up = QVector3D(0, 1, 0);
+                    auto angle = qAcos(static_cast<double>(QVector3D::dotProduct(up, vec) / vec.length()));
+                    auto axis = QVector3D::crossProduct(up, vec);
+                    auto rot = QQuaternion::fromAxisAndAngle(axis, angle * static_cast<double>(radiansToDegrees));
+                    auto roty = QQuaternion::fromAxisAndAngle(0.0f, 1.0f, 0.0f,
+                                                              (xr >= 0.0f && zr >= 0.0f) || (xr <= 0.0f && zr <= 0.0f)
+                                                              ? 90.0f : -90.0f);
+                    if (xr == 0.0f) {
+                        roty = QQuaternion::fromAxisAndAngle(0.0f, 1.0f, 0.0f, 180.0f);
+                        item->setRotation(roty * rot);
+                    } else if (zr == 0.0f) {
+                        item->setRotation(rot);
+                    } else {
+                        item->setRotation(roty * rot);
+                    }
+
+                    item->setPosition(QVector3D(xr, yr, zr));
+                    m_graph->addCustomItem(item);
                 }
-                auto vec = m_function(QVector3D(xr, yr, zr), m_a, m_b, m_c);
-                auto item = new QCustom3DItem();
-                if (m_lenghtOption == 0) {
-                    item->setScaling(
-                            QVector3D(0.05f, vec.lengthSquared() / max * minimum(stepx, stepy, stepz) / 10, 0.05f));
-                } else if (m_lenghtOption == 1) {
-                    item->setScaling(QVector3D(0.07f, 0.12f, 0.07f));
-                } else {
-                    item->setScaling(QVector3D(0.05f, m_arrowLength / 300.0f * vec.lengthSquared() / max, 0.05f));
-                }
-
-                item->setMeshFile(QStringLiteral(":/arrow.obj"));
-                auto out = static_cast<unsigned char>(abs((lengths[i] - min) * 255 / (max - min)));
-                QImage sunColor = QImage(2, 2, QImage::Format_RGB32);
-                sunColor.fill(QColor(static_cast<int>(out), 0, static_cast<int>(255 - out)));
-                item->setTextureImage(sunColor);
-                i++;
-
-                // rotation
-                auto up = QVector3D(0, 1, 0);
-                auto angle = qAcos(static_cast<double>(QVector3D::dotProduct(up, vec) / vec.length()));
-                auto axis = QVector3D::crossProduct(up, vec);
-                auto rot = QQuaternion::fromAxisAndAngle(axis, angle * static_cast<double>(radiansToDegrees));
-                auto roty = QQuaternion::fromAxisAndAngle(0.0f, 1.0f, 0.0f,
-                                                          (xr >= 0.0f && zr >= 0.0f) || (xr <= 0.0f && zr <= 0.0f)
-                                                          ? 90.0f : -90.0f);
-                if (xr == 0.0f) {
-                    roty = QQuaternion::fromAxisAndAngle(0.0f, 1.0f, 0.0f, 180.0f);
-                    item->setRotation(roty * rot);
-                } else if (zr == 0.0f) {
-                    item->setRotation(rot);
-                } else {
-                    item->setRotation(roty * rot);
-                }
-
-                item->setPosition(QVector3D(xr, yr, zr));
-                m_graph->addCustomItem(item);
             }
         }
-    }
+     }
 }
 
 void Scatter::setXFirst(const QString &x) {
