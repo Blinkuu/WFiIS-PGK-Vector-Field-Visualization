@@ -1,0 +1,22 @@
+var searchData=
+[
+  ['scatter',['Scatter',['../classScatter.html',1,'Scatter'],['../classScatter.html#aa60549bb860a6a40dc02be2d15a47148',1,'Scatter::Scatter()']]],
+  ['seta',['setA',['../classScatter.html#aced99447ad2feed771053c5411dce80a',1,'Scatter']]],
+  ['setarrowslength',['setArrowsLength',['../classScatter.html#ad0f2024769484587279b7fc1435d2351',1,'Scatter']]],
+  ['setb',['setB',['../classScatter.html#a4b89f583e92d56e8817654e26e64daaa',1,'Scatter']]],
+  ['setc',['setC',['../classScatter.html#ac46f64b0940da43cf3496ccb87a1265b',1,'Scatter']]],
+  ['setcutbyplain',['setCutByPlain',['../classScatter.html#a99e6da7e3caad5a6bfbba00f5fac5c48',1,'Scatter']]],
+  ['setplaina',['setPlainA',['../classScatter.html#a7bbc146f5103b164b147b1f815a506c3',1,'Scatter']]],
+  ['setplainb',['setPlainB',['../classScatter.html#a31a3325bfadcb8c352e345d96f5f117c',1,'Scatter']]],
+  ['setplainc',['setPlainC',['../classScatter.html#a6c68d01e67d7b85e754446c7c6196ec9',1,'Scatter']]],
+  ['setplaind',['setPlainD',['../classScatter.html#ae9d210a31b757ad194561155336b4d87',1,'Scatter']]],
+  ['setxfirst',['setXFirst',['../classScatter.html#a106e2f19639cf628a8cbbd7d24bebc87',1,'Scatter']]],
+  ['setxrange',['setXRange',['../classScatter.html#ae2a519f5bba11fa56ad51e0cf61bd6f9',1,'Scatter']]],
+  ['setxsecond',['setXSecond',['../classScatter.html#a6705dbb3d3b5a100e68de20f774cd714',1,'Scatter']]],
+  ['setyfirst',['setYFirst',['../classScatter.html#ab9301e76f7eb976b2f45f1bebcb5501c',1,'Scatter']]],
+  ['setyrange',['setYRange',['../classScatter.html#a536cea87d06c8053b12b0b56aa02b845',1,'Scatter']]],
+  ['setysecond',['setYSecond',['../classScatter.html#a14f8b2bb295f2d06202c01f701e37938',1,'Scatter']]],
+  ['setzfirst',['setZFirst',['../classScatter.html#aaccd51a13c345c5468d587b3c326e2d0',1,'Scatter']]],
+  ['setzrange',['setZRange',['../classScatter.html#ab374eaeabad2350b5b838d24edc58654',1,'Scatter']]],
+  ['setzsecond',['setZSecond',['../classScatter.html#a70d35b9226d9120651622e6b8054d593',1,'Scatter']]]
+];

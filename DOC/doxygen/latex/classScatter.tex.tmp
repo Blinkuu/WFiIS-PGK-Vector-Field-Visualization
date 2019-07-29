@@ -1,0 +1,423 @@
+\hypertarget{classScatter}{}\section{Scatter Class Reference}
+\label{classScatter}\index{Scatter@{Scatter}}
+
+
+\hyperlink{classScatter}{Scatter} -\/ klasa której instancja służy do wizualizacji wykresów w przestrzeni 3D.  
+
+
+
+
+{\ttfamily \#include $<$scatter.\+h$>$}
+
+
+
+Inheritance diagram for Scatter\+:
+% FIG 0
+
+
+Collaboration diagram for Scatter\+:
+% FIG 1
+\subsection*{Public Slots}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classScatter_a106e2f19639cf628a8cbbd7d24bebc87}{set\+X\+First} (const Q\+String \&x)
+\begin{DoxyCompactList}\small\item\em set\+X\+First -\/ ustawia początek osi x \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_a6705dbb3d3b5a100e68de20f774cd714}{set\+X\+Second} (const Q\+String \&x)
+\begin{DoxyCompactList}\small\item\em set\+X\+Second -\/ ustawia koniec osi x \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_ab9301e76f7eb976b2f45f1bebcb5501c}{set\+Y\+First} (const Q\+String \&y)
+\begin{DoxyCompactList}\small\item\em set\+Y\+First -\/ ustawia początek osi y \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_a14f8b2bb295f2d06202c01f701e37938}{set\+Y\+Second} (const Q\+String \&y)
+\begin{DoxyCompactList}\small\item\em set\+Y\+Second -\/ ustawia koniec osi y \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_aaccd51a13c345c5468d587b3c326e2d0}{set\+Z\+First} (const Q\+String \&z)
+\begin{DoxyCompactList}\small\item\em set\+Z\+First -\/ ustawia początek osi z \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_a70d35b9226d9120651622e6b8054d593}{set\+Z\+Second} (const Q\+String \&z)
+\begin{DoxyCompactList}\small\item\em set\+Z\+Second -\/ ustawia koniec osi z \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_aced99447ad2feed771053c5411dce80a}{setA} (const Q\+String \&a)
+\begin{DoxyCompactList}\small\item\em setA -\/ ustawia stałą stojącą przy zmiennej x wyjściowego wektora \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_a4b89f583e92d56e8817654e26e64daaa}{setB} (const Q\+String \&b)
+\begin{DoxyCompactList}\small\item\em setB -\/ ustawia stałą stojącą przy zmiennej y wyjściowego wektora \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_ac46f64b0940da43cf3496ccb87a1265b}{setC} (const Q\+String \&c)
+\begin{DoxyCompactList}\small\item\em setC -\/ ustawia stałą stojącą przy zmiennej c wyjściowego wektora \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_ae2a519f5bba11fa56ad51e0cf61bd6f9}{set\+X\+Range} (const Q\+String \&x)
+\begin{DoxyCompactList}\small\item\em set\+X\+Range -\/ pozwala zmienić liczbę podprzedziałów na kierunku X \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_a536cea87d06c8053b12b0b56aa02b845}{set\+Y\+Range} (const Q\+String \&y)
+\begin{DoxyCompactList}\small\item\em set\+Y\+Range -\/ pozwala zmienić liczbę podprzedziałów na kierunku Y \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_ab374eaeabad2350b5b838d24edc58654}{set\+Z\+Range} (const Q\+String \&z)
+\begin{DoxyCompactList}\small\item\em set\+Z\+Range -\/ pozwala zmienić liczbę podprzedziałów na kierunku Z \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_ad0f2024769484587279b7fc1435d2351}{set\+Arrows\+Length} (int arrow\+Length)
+\begin{DoxyCompactList}\small\item\em set\+Arrows\+Length -\/ metoda pozwalająca na manipulację długością strzałek \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_afd46195f2b576898ee24a228f10f59e4}{functionbox\+Item\+Changed} (int index)
+\begin{DoxyCompactList}\small\item\em functionbox\+Item\+Changed -\/ metoda która pozwala zmienić funkcję, za pomocą której wyznaczane są wektory \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_a2156e95b7c547ae2f6ce676e8e096caf}{lengthbox\+Item\+Changed} (int index)
+\begin{DoxyCompactList}\small\item\em lengthbox\+Item\+Changed -\/ metoda która zmienia tryb wyznaczania długości wektorów. \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_a34a422e3dadccacbb6f7f84b7223fbce}{themebox\+Item\+Changed} (int index)
+\begin{DoxyCompactList}\small\item\em themebox\+Item\+Changed -\/ metoda która zmienia kolor tła \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_a99e6da7e3caad5a6bfbba00f5fac5c48}{set\+Cut\+By\+Plain} (bool checked)
+\begin{DoxyCompactList}\small\item\em set\+Cut\+By\+Plain -\/ metoda który pozwala na odcięcie wektorów powyżej zdefiniowanej płaszczyzny \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_a7bbc146f5103b164b147b1f815a506c3}{set\+PlainA} (const Q\+String \&A)
+\begin{DoxyCompactList}\small\item\em set\+PlainA -\/ ustawia parametr A dla płaszczyny która będzie odcinać wektory \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_a31a3325bfadcb8c352e345d96f5f117c}{set\+PlainB} (const Q\+String \&B)
+\begin{DoxyCompactList}\small\item\em set\+PlainB -\/ ustawia parametr B dla płaszczyny która będzie odcinać wektory \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_a6c68d01e67d7b85e754446c7c6196ec9}{set\+PlainC} (const Q\+String \&C)
+\begin{DoxyCompactList}\small\item\em set\+PlainC -\/ ustawia parametr C dla płaszczyny która będzie odcinać wektory \end{DoxyCompactList}\item 
+void \hyperlink{classScatter_ae9d210a31b757ad194561155336b4d87}{set\+PlainD} (const Q\+String \&D)
+\begin{DoxyCompactList}\small\item\em set\+PlainD -\/ ustawia parametr D dla płaszczyny która będzie odcinać wektory \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classScatter_adf73dd9f2b36d954969ae3aba5a559ee}\label{classScatter_adf73dd9f2b36d954969ae3aba5a559ee}} 
+void \hyperlink{classScatter_adf73dd9f2b36d954969ae3aba5a559ee}{handle\+Button} ()
+\begin{DoxyCompactList}\small\item\em handle\+Button -\/ metoda która obsługuje kliknięcie przycisku zapis do pliku \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classScatter_aa60549bb860a6a40dc02be2d15a47148}{Scatter} (Q3\+D\+Scatter $\ast$scatter)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classScatter}{Scatter} -\/ konstruktor klasy scatter. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classScatter_a0e24345864dcf8d50cae40695f8daa86}\label{classScatter_a0e24345864dcf8d50cae40695f8daa86}} 
+\hyperlink{classScatter_a0e24345864dcf8d50cae40695f8daa86}{$\sim$\+Scatter} ()
+\begin{DoxyCompactList}\small\item\em destruktor klasy \hyperlink{classScatter}{Scatter} \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classScatter_adf3106a632dd3635289c7820f24a5d7e}\label{classScatter_adf3106a632dd3635289c7820f24a5d7e}} 
+void \hyperlink{classScatter_adf3106a632dd3635289c7820f24a5d7e}{generate\+And\+Render\+Vectors} ()
+\begin{DoxyCompactList}\small\item\em generate\+And\+Render\+Vectors funkcja, która generuje dane na podstawie parametrów wejściowych, potrzebne do przedstawienia ich w przestrzeni. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classScatter}{Scatter} -\/ klasa której instancja służy do wizualizacji wykresów w przestrzeni 3D. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classScatter_aa60549bb860a6a40dc02be2d15a47148}\label{classScatter_aa60549bb860a6a40dc02be2d15a47148}} 
+\index{Scatter@{Scatter}!Scatter@{Scatter}}
+\index{Scatter@{Scatter}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{Scatter()}{Scatter()}}
+{\footnotesize\ttfamily Scatter\+::\+Scatter (\begin{DoxyParamCaption}\item[{Q3\+D\+Scatter $\ast$}]{scatter }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+\hyperlink{classScatter}{Scatter} -\/ konstruktor klasy scatter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em scatter} & \mbox{[}Q3\+D\+Scatter$\ast$\mbox{]} -\/ wskaźnik na obiekt typu Q3\+D\+Scatter, który dostarcza metody pozwalające na wizualizacę danch w przestrzeni. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classScatter_afd46195f2b576898ee24a228f10f59e4}\label{classScatter_afd46195f2b576898ee24a228f10f59e4}} 
+\index{Scatter@{Scatter}!functionbox\+Item\+Changed@{functionbox\+Item\+Changed}}
+\index{functionbox\+Item\+Changed@{functionbox\+Item\+Changed}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{functionbox\+Item\+Changed}{functionboxItemChanged}}
+{\footnotesize\ttfamily void Scatter\+::functionbox\+Item\+Changed (\begin{DoxyParamCaption}\item[{int}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+functionbox\+Item\+Changed -\/ metoda która pozwala zmienić funkcję, za pomocą której wyznaczane są wektory 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & -\/ indeks nowej funkcji \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_a2156e95b7c547ae2f6ce676e8e096caf}\label{classScatter_a2156e95b7c547ae2f6ce676e8e096caf}} 
+\index{Scatter@{Scatter}!lengthbox\+Item\+Changed@{lengthbox\+Item\+Changed}}
+\index{lengthbox\+Item\+Changed@{lengthbox\+Item\+Changed}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{lengthbox\+Item\+Changed}{lengthboxItemChanged}}
+{\footnotesize\ttfamily void Scatter\+::lengthbox\+Item\+Changed (\begin{DoxyParamCaption}\item[{int}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+lengthbox\+Item\+Changed -\/ metoda która zmienia tryb wyznaczania długości wektorów. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & -\/ indeks trybu \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_aced99447ad2feed771053c5411dce80a}\label{classScatter_aced99447ad2feed771053c5411dce80a}} 
+\index{Scatter@{Scatter}!setA@{setA}}
+\index{setA@{setA}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{setA}{setA}}
+{\footnotesize\ttfamily void Scatter\+::setA (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{a }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+setA -\/ ustawia stałą stojącą przy zmiennej x wyjściowego wektora 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & -\/ nowa wartość stałej \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_ad0f2024769484587279b7fc1435d2351}\label{classScatter_ad0f2024769484587279b7fc1435d2351}} 
+\index{Scatter@{Scatter}!set\+Arrows\+Length@{set\+Arrows\+Length}}
+\index{set\+Arrows\+Length@{set\+Arrows\+Length}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{set\+Arrows\+Length}{setArrowsLength}}
+{\footnotesize\ttfamily void Scatter\+::set\+Arrows\+Length (\begin{DoxyParamCaption}\item[{int}]{arrow\+Length }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+set\+Arrows\+Length -\/ metoda pozwalająca na manipulację długością strzałek 
+
+
+\begin{DoxyParams}{Parameters}
+{\em arrow\+Length} & -\/ nowa długość strzałek \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_a4b89f583e92d56e8817654e26e64daaa}\label{classScatter_a4b89f583e92d56e8817654e26e64daaa}} 
+\index{Scatter@{Scatter}!setB@{setB}}
+\index{setB@{setB}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{setB}{setB}}
+{\footnotesize\ttfamily void Scatter\+::setB (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+setB -\/ ustawia stałą stojącą przy zmiennej y wyjściowego wektora 
+
+
+\begin{DoxyParams}{Parameters}
+{\em b} & -\/ nowa wartość stałej \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_ac46f64b0940da43cf3496ccb87a1265b}\label{classScatter_ac46f64b0940da43cf3496ccb87a1265b}} 
+\index{Scatter@{Scatter}!setC@{setC}}
+\index{setC@{setC}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{setC}{setC}}
+{\footnotesize\ttfamily void Scatter\+::setC (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{c }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+setC -\/ ustawia stałą stojącą przy zmiennej c wyjściowego wektora 
+
+
+\begin{DoxyParams}{Parameters}
+{\em c} & -\/ nowa wartość stałej \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_a99e6da7e3caad5a6bfbba00f5fac5c48}\label{classScatter_a99e6da7e3caad5a6bfbba00f5fac5c48}} 
+\index{Scatter@{Scatter}!set\+Cut\+By\+Plain@{set\+Cut\+By\+Plain}}
+\index{set\+Cut\+By\+Plain@{set\+Cut\+By\+Plain}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{set\+Cut\+By\+Plain}{setCutByPlain}}
+{\footnotesize\ttfamily void Scatter\+::set\+Cut\+By\+Plain (\begin{DoxyParamCaption}\item[{bool}]{checked }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+set\+Cut\+By\+Plain -\/ metoda który pozwala na odcięcie wektorów powyżej zdefiniowanej płaszczyzny 
+
+
+\begin{DoxyParams}{Parameters}
+{\em checked} & -\/ true -\/ wektory będą odcinane, false -\/ brak odcinania \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_a7bbc146f5103b164b147b1f815a506c3}\label{classScatter_a7bbc146f5103b164b147b1f815a506c3}} 
+\index{Scatter@{Scatter}!set\+PlainA@{set\+PlainA}}
+\index{set\+PlainA@{set\+PlainA}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{set\+PlainA}{setPlainA}}
+{\footnotesize\ttfamily void Scatter\+::set\+PlainA (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{A }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+set\+PlainA -\/ ustawia parametr A dla płaszczyny która będzie odcinać wektory 
+
+
+\begin{DoxyParams}{Parameters}
+{\em A} & -\/ wartość parametru A \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_a31a3325bfadcb8c352e345d96f5f117c}\label{classScatter_a31a3325bfadcb8c352e345d96f5f117c}} 
+\index{Scatter@{Scatter}!set\+PlainB@{set\+PlainB}}
+\index{set\+PlainB@{set\+PlainB}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{set\+PlainB}{setPlainB}}
+{\footnotesize\ttfamily void Scatter\+::set\+PlainB (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{B }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+set\+PlainB -\/ ustawia parametr B dla płaszczyny która będzie odcinać wektory 
+
+
+\begin{DoxyParams}{Parameters}
+{\em B} & -\/ wartość parametru B \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_a6c68d01e67d7b85e754446c7c6196ec9}\label{classScatter_a6c68d01e67d7b85e754446c7c6196ec9}} 
+\index{Scatter@{Scatter}!set\+PlainC@{set\+PlainC}}
+\index{set\+PlainC@{set\+PlainC}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{set\+PlainC}{setPlainC}}
+{\footnotesize\ttfamily void Scatter\+::set\+PlainC (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{C }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+set\+PlainC -\/ ustawia parametr C dla płaszczyny która będzie odcinać wektory 
+
+
+\begin{DoxyParams}{Parameters}
+{\em C} & -\/ wartość parametru C \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_ae9d210a31b757ad194561155336b4d87}\label{classScatter_ae9d210a31b757ad194561155336b4d87}} 
+\index{Scatter@{Scatter}!set\+PlainD@{set\+PlainD}}
+\index{set\+PlainD@{set\+PlainD}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{set\+PlainD}{setPlainD}}
+{\footnotesize\ttfamily void Scatter\+::set\+PlainD (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{D }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+set\+PlainD -\/ ustawia parametr D dla płaszczyny która będzie odcinać wektory 
+
+
+\begin{DoxyParams}{Parameters}
+{\em D} & -\/ wartość parametru D \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_a106e2f19639cf628a8cbbd7d24bebc87}\label{classScatter_a106e2f19639cf628a8cbbd7d24bebc87}} 
+\index{Scatter@{Scatter}!set\+X\+First@{set\+X\+First}}
+\index{set\+X\+First@{set\+X\+First}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{set\+X\+First}{setXFirst}}
+{\footnotesize\ttfamily void Scatter\+::set\+X\+First (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+set\+X\+First -\/ ustawia początek osi x 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & -\/ wartość od której ma rozpoczynać się oś x \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_ae2a519f5bba11fa56ad51e0cf61bd6f9}\label{classScatter_ae2a519f5bba11fa56ad51e0cf61bd6f9}} 
+\index{Scatter@{Scatter}!set\+X\+Range@{set\+X\+Range}}
+\index{set\+X\+Range@{set\+X\+Range}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{set\+X\+Range}{setXRange}}
+{\footnotesize\ttfamily void Scatter\+::set\+X\+Range (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+set\+X\+Range -\/ pozwala zmienić liczbę podprzedziałów na kierunku X 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & -\/ nowa liczba podprzedziałów \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_a6705dbb3d3b5a100e68de20f774cd714}\label{classScatter_a6705dbb3d3b5a100e68de20f774cd714}} 
+\index{Scatter@{Scatter}!set\+X\+Second@{set\+X\+Second}}
+\index{set\+X\+Second@{set\+X\+Second}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{set\+X\+Second}{setXSecond}}
+{\footnotesize\ttfamily void Scatter\+::set\+X\+Second (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+set\+X\+Second -\/ ustawia koniec osi x 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & -\/ wartość na której ma kończyć się oś x \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_ab9301e76f7eb976b2f45f1bebcb5501c}\label{classScatter_ab9301e76f7eb976b2f45f1bebcb5501c}} 
+\index{Scatter@{Scatter}!set\+Y\+First@{set\+Y\+First}}
+\index{set\+Y\+First@{set\+Y\+First}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{set\+Y\+First}{setYFirst}}
+{\footnotesize\ttfamily void Scatter\+::set\+Y\+First (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+set\+Y\+First -\/ ustawia początek osi y 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & -\/ wartość od której ma rozpoczynać się oś y \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_a536cea87d06c8053b12b0b56aa02b845}\label{classScatter_a536cea87d06c8053b12b0b56aa02b845}} 
+\index{Scatter@{Scatter}!set\+Y\+Range@{set\+Y\+Range}}
+\index{set\+Y\+Range@{set\+Y\+Range}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{set\+Y\+Range}{setYRange}}
+{\footnotesize\ttfamily void Scatter\+::set\+Y\+Range (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+set\+Y\+Range -\/ pozwala zmienić liczbę podprzedziałów na kierunku Y 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & -\/ nowa liczba podprzedziałów \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_a14f8b2bb295f2d06202c01f701e37938}\label{classScatter_a14f8b2bb295f2d06202c01f701e37938}} 
+\index{Scatter@{Scatter}!set\+Y\+Second@{set\+Y\+Second}}
+\index{set\+Y\+Second@{set\+Y\+Second}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{set\+Y\+Second}{setYSecond}}
+{\footnotesize\ttfamily void Scatter\+::set\+Y\+Second (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+set\+Y\+Second -\/ ustawia koniec osi y 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & -\/ wartość na której ma kończyć się oś y \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_aaccd51a13c345c5468d587b3c326e2d0}\label{classScatter_aaccd51a13c345c5468d587b3c326e2d0}} 
+\index{Scatter@{Scatter}!set\+Z\+First@{set\+Z\+First}}
+\index{set\+Z\+First@{set\+Z\+First}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{set\+Z\+First}{setZFirst}}
+{\footnotesize\ttfamily void Scatter\+::set\+Z\+First (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{z }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+set\+Z\+First -\/ ustawia początek osi z 
+
+
+\begin{DoxyParams}{Parameters}
+{\em z} & -\/ wartość od której ma rozpoczynać się oś z \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_ab374eaeabad2350b5b838d24edc58654}\label{classScatter_ab374eaeabad2350b5b838d24edc58654}} 
+\index{Scatter@{Scatter}!set\+Z\+Range@{set\+Z\+Range}}
+\index{set\+Z\+Range@{set\+Z\+Range}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{set\+Z\+Range}{setZRange}}
+{\footnotesize\ttfamily void Scatter\+::set\+Z\+Range (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{z }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+set\+Z\+Range -\/ pozwala zmienić liczbę podprzedziałów na kierunku Z 
+
+
+\begin{DoxyParams}{Parameters}
+{\em z} & -\/ nowa liczba podprzedziałów \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_a70d35b9226d9120651622e6b8054d593}\label{classScatter_a70d35b9226d9120651622e6b8054d593}} 
+\index{Scatter@{Scatter}!set\+Z\+Second@{set\+Z\+Second}}
+\index{set\+Z\+Second@{set\+Z\+Second}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{set\+Z\+Second}{setZSecond}}
+{\footnotesize\ttfamily void Scatter\+::set\+Z\+Second (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{z }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+set\+Z\+Second -\/ ustawia koniec osi z 
+
+
+\begin{DoxyParams}{Parameters}
+{\em z} & -\/ wartość na której ma kończyć się oś z \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classScatter_a34a422e3dadccacbb6f7f84b7223fbce}\label{classScatter_a34a422e3dadccacbb6f7f84b7223fbce}} 
+\index{Scatter@{Scatter}!themebox\+Item\+Changed@{themebox\+Item\+Changed}}
+\index{themebox\+Item\+Changed@{themebox\+Item\+Changed}!Scatter@{Scatter}}
+\subsubsection{\texorpdfstring{themebox\+Item\+Changed}{themeboxItemChanged}}
+{\footnotesize\ttfamily void Scatter\+::themebox\+Item\+Changed (\begin{DoxyParamCaption}\item[{int}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+themebox\+Item\+Changed -\/ metoda która zmienia kolor tła 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & -\/ indeks koloru tła \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+W\+Fi\+I\+S-\/\+P\+G\+K-\/\+Vector-\/\+Field-\/\+Visualization/scatter.\+h\item 
+W\+Fi\+I\+S-\/\+P\+G\+K-\/\+Vector-\/\+Field-\/\+Visualization/scatter.\+cpp\end{DoxyCompactItemize}
